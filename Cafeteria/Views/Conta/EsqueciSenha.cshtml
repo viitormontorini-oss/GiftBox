@@ -1,0 +1,90 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esqueci a senha</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/client.css">
+</head>
+
+<body>
+@* container principal do login separando a tela em 2 column de 6 por 6 (login/imagem)*@
+
+    <div class="container-fluid p-0"> @* container 100% da tela padding interno zerado por padrao *@
+        <div class="row g-0">
+            @* linha obrigatoria da hierarquia do bootstrap g-0 = gutter espaçamentos zerados por padrao*@
+            <div class="col-12 col-md-6 min-vh-100 d-flex align-items-center justify-content-center">
+
+                <div class="col-8 my-auto py-4">
+                    @* cada col funciona em sua proprio elemento pai, tipo col 6 > col 8 >*@
+
+                    @*logo da gift box: o link leva para a página inicial do site *@
+                    @* d-inline-flex: só a logo é clicável, não a linha inteira. link-dark e text-decoration-none: sem azul e sem sublinhado *@
+                    <a asp-controller="Home" asp-action="Index" class="d-inline-flex align-items-center mb-4 mb-md-5 link-dark text-decoration-none">
+                        <img src="~/imgs/gift_box_logo.png" alt="Logo Gift Box" width="64" class="rounded-circle me-3">
+                        <div>
+                            <p class="fs-4 fw-bold mb-0">GIFT BOX</p>
+                            <p class="text-gold mb-0">cestas criativas</p>
+                        </div>
+                    </a>
+                    <h1 class="fs-3 fw-bold">Esqueceu a senha?</h1> @* font-size e font-weight*@
+                    <p class="text-secondary mb-3 mb-md-4">Digite o e-mail da sua conta e enviamos um link para criar
+                        uma senha nova.</p>
+                    @* secondary é a cor do texto*@
+
+                    @* formulario da gift box *@
+                    <form asp-controller="Conta" asp-action="EsqueciSenha" method="post">
+                        @* envia para o proprio EsqueciSenha para valida e envia o email *@
+
+                        <div class="mb-4"> @* margin bottom de 3 *@
+                            <label for="email" class="form-label fw-semibold">E-mail</label>
+                            @* form-label estilo bootstrap para o rotulo*@
+                            @* required: o navegador não deixa enviar vazio *@
+                            <input type="email" class="form-control" id="email" name="Email" placeholder="seu@email.com" required>
+                        </div>
+
+
+                        @*botao de Entrar na  conta*@
+                        <button type="submit" class="btn btn-dark w-100 rounded-pill">Enviar link</button>
+                        @* btn - transformar em botao bootstrap, fundo dark *@
+
+                    </form>
+
+                    @* nao tem login*@
+                    <p class="text-center mt-3">
+                        <a asp-controller="Conta" asp-action="Login" class="link-secondary text-decoration-none">← Voltar para o
+                            login</a>
+                            @* asp-controller="Conta" asp-action="Login" volta para o login *@
+                    </p>
+                    @* para a setinha na esquerda pode usar tbm &larr*@
+                </div>
+            </div>
+
+
+            @* coluna 6 de 12 do grid system e min-vh significa 100% da altura da tela *@
+            <div class="col-md-6 position-relative d-none d-md-block p-2">
+
+                @* painel-login + painel-animado (client.css): fundo dourado se mexendo; d-flex centraliza o cartão *@
+                <div class="painel-login painel-animado w-100 h-100 rounded-4 d-flex align-items-center justify-content-center p-4">
+
+                    @* cartao (client.css): levemente inclinado e flutuando *@
+                    <div class="cartao bg-white rounded-4 shadow p-5">
+                        <p class="text-secondary mb-4">Para: <span class="text-dark">Você</span></p>
+                        @* digitando (client.css): a frase vai aparecendo da esquerda para a direita *@
+                        <p class="fs-2 fst-italic mb-4"><span class="digitando">Seu presente começa aqui.</span></p>
+                        <p class="text-secondary text-end mb-0">De: <span class="text-dark">Gift Box</span></p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>

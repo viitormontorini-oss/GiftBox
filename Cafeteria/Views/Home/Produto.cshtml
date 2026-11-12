@@ -1,0 +1,133 @@
+@model Business.Produto
+@{
+    ViewData["Title"] = "Produto";
+}
+
+<div class="container py-5">
+        <div class="row g-5 align-items-center">
+
+            @* fotos: o carrossel troca a foto grande. As miniaturas são os "indicadores" do próprio Bootstrap:
+               ele marca sozinho qual está ativa (a ativa fica forte e as outras apagadas), sem JavaScript.
+               A lista de fotos vem do HomeController (ViewBag.Fotos): a original + os ângulos *@
+            @{
+                // pega a lista que o controller mandou. (List<string>) avisa que é uma lista de textos
+                var fotos = (List<string>)ViewBag.Fotos;
+            }
+            <div class="col-12 col-md-5 col-lg-4">
+                @* carousel = carrossel. slide = efeito de deslizar. id = nome que as miniaturas usam para achar o carrossel *@
+                <div id="fotosProduto" class="carousel slide">
+                    @* caixa que guarda as fotos grandes *@
+                    <div class="carousel-inner">
+                        @* repete uma vez para cada foto. i é a posição dela: 0, 1, 2, 3 *@
+                        @for (int i = 0; i < fotos.Count; i++)
+                        {
+                            // começa sem marca
+                            string ativo = "";
+                            // é a primeira foto?
+                            if (i == 0)
+                            {
+                                // sim: é ela que aparece ao abrir a página
+                                ativo = "active";
+                            }
+
+                            @* cada foto é um item. Só o que tem "active" aparece *@
+                            <div class="carousel-item @ativo">
+                                <div class="ratio ratio-1x1">
+                                    @* foto grande *@
+                                    <img src="@Url.Content(fotos[i])" alt="@Model.nome" class="object-fit-contain rounded-4 p-3">
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    @* miniaturas: só aparecem se a cesta tiver mais de uma foto.
+                       O Bootstrap só marca a miniatura ativa se ela estiver DENTRO do carrossel e dentro de
+                       "carousel-indicators". As classes position-static, m-0, w-25, h-auto, border-0 e
+                       bg-transparent só desfazem o visual de "bolinha" que o Bootstrap põe nos indicadores. *@
+                    @if (fotos.Count > 1)
+                    {
+                        <div class="carousel-indicators position-static m-0 mt-2 gap-2">
+                            @* repete uma vez para cada miniatura *@
+                            @for (int i = 0; i < fotos.Count; i++)
+                            {
+                                // começa sem marca
+                                string ativa = "";
+                                // aviso para leitores de tela: não é a foto atual
+                                string atual = "false";
+                                // é a primeira miniatura?
+                                if (i == 0)
+                                {
+                                    // sim: começa destacada
+                                    ativa = "active";
+                                    // e é a foto atual
+                                    atual = "true";
+                                }
+
+                                @* botão da miniatura. data-bs-target = qual carrossel controla; data-bs-slide-to = qual foto mostrar *@
+                                <button type="button" class="@ativa w-25 h-auto m-0 p-0 border-0 bg-transparent"
+                                    data-bs-target="#fotosProduto" data-bs-slide-to="@i" aria-current="@atual" aria-label="Ver foto @(i + 1)">
+                                    <div class="ratio ratio-1x1">
+                                        <img src="@Url.Content(fotos[i])" alt="" class="object-fit-contain rounded-3 border">
+                                    </div>
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @* informações *@
+            <div class="col-12 col-md-6 offset-md-1 col-lg-5 offset-lg-1">
+                @* Model = a cesta que o controller mandou. .nome = campo do Produto.cs *@
+                <h1 class="fs-2 fw-bold mb-2">@Model.nome</h1>
+                @* preço em reais. "C" = moeda; pt-BR = formato brasileiro (R$ 95,00) *@
+                <p class="fs-4 fw-bold text-gold mb-3">@Model.preco.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</p>
+                @* descrição que o gestor cadastrou *@
+                <p class="text-secondary mb-5">@Model.descricao</p>
+
+                @* formulário do carrinho: envia o id da cesta e a quantidade para CarrinhoController.Adicionar *@
+                <form asp-controller="Carrinho" asp-action="Adicionar" method="post">
+                    @* campo escondido: leva o id da cesta aberta *@
+                    <input type="hidden" name="id" value="@Model.id">
+
+                    <div class="row mb-4"> @* cada row nova cria um grid-system novo *@
+                        <div class="col-6 col-md-4">
+                            @* campo de número: as setinhas do próprio navegador sobem e descem a quantidade, sem JavaScript.
+                               form-control-sm = campo pequeno. min="1" não deixa escolher menos de 1 *@
+                            <input type="number" name="quantidade" value="1" min="1" class="form-control form-control-sm text-center">
+                        </div>
+                    </div>
+
+                    @* name e value avisam o CarrinhoController para ir direto à etapa 1 depois de guardar a cesta *@
+                    <button type="submit" name="irParaPedido" value="1" class="btn btn-dark rounded-pill w-100 py-2">Solicitar pedido</button>
+                    @* type="submit" envia o formulário e coloca a cesta no carrinho *@
+                    <button type="submit" class="btn btn-outline-gold rounded-pill w-100 py-2 mt-3">Adicionar ao carrinho</button>
+                </form>
+            </div>
+
+        </div>
+
+        @* sugestoes: as 4 cestas vêm do HomeController (ViewBag.Sugestoes), o foreach repete o card *@
+        <section>
+            <h2 class="fs-5 fw-bold mt-5 pt-5 mb-2">Você também pode gostar</h2>
+            <div class="risco mb-4"></div>
+            <div class="row g-5">
+                @foreach (var sugestao in (List<Business.Produto>)ViewBag.Sugestoes)
+                {
+                    <div class="col-6 col-md-3">
+                        @* o nome e a foto levam para a página da cesta sugerida *@
+                        <a asp-controller="Home" asp-action="Produto" asp-route-id="@sugestao.id" class="text-decoration-none link-dark">
+                            <div class="ratio ratio-1x1">
+                                @* foto da cesta sugerida, inteira (object-fit-contain) *@
+                                <img src="@Url.Content(sugestao.imagem ?? "~/imgs/produtos/produto.jpg")" alt="@sugestao.nome"
+                                    class="img-fluid rounded-4 object-fit-contain p-3">
+                            </div>
+                            <p class="mt-2 mb-0">@sugestao.nome</p>
+                        </a>
+                        @* preço da cesta sugerida, em reais *@
+                        <p class="fw-bold text-gold">@sugestao.preco.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</p>
+                    </div>
+                }
+            </div>
+        </section>
+    </div>

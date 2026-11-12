@@ -1,0 +1,31 @@
+@model Business.CidadeEntrega
+@{
+    ViewData["Title"] = "Editar cidade";
+}
+
+@* edição de cidade do Yago, no seu estilo *@
+<div class="container py-5">
+
+    <p class="small text-secondary mb-2">
+        <a asp-area="Admin" asp-controller="AdminCidadesEntrega" asp-action="Index" class="link-secondary text-decoration-none">Cidades de entrega</a> / Editando @Model.nome
+    </p>
+
+    <div class="row">
+        <div class="col-12 col-lg-6 mx-auto">
+            <form asp-area="Admin" asp-controller="AdminCidadesEntrega" asp-action="Editar" asp-route-id="@Model.id" method="post" class="bg-white border rounded-4 p-5">
+                <h1 class="fs-2 fw-bold">Editar cidade</h1>
+                <p class="text-secondary mb-4">Pedidos já feitos mantêm a taxa da época.</p>
+
+                <partial name="_Campos" model="Model" />
+
+                <div class="row g-2 mt-4">
+                    <div class="col-12 col-sm-6"><a asp-area="Admin" asp-controller="AdminCidadesEntrega" asp-action="Index"
+                            class="btn btn-light border w-100 h-100 d-flex align-items-center justify-content-center">Cancelar</a></div>
+                    <div class="col-12 col-sm-6"><button type="submit"
+                            class="btn btn-gold w-100 h-100 d-flex align-items-center justify-content-center">Salvar alterações</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

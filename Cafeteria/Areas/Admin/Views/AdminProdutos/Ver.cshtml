@@ -1,0 +1,89 @@
+@model Business.Produto
+@using System.Globalization
+@{
+    ViewData["Title"] = "Exibir produto";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var numero = "#" + Model.id.ToString("D4");
+    // status pelo estoque: 0 = Inativo, até 5 = Estoque baixo, mais = Ativo
+    var status = Model.quantidade == 0 ? "Inativo" : Model.quantidade <= 5 ? "Estoque baixo" : "Ativo";
+    var cor = Model.quantidade == 0 ? "bg-secondary" : Model.quantidade <= 5 ? "bg-danger" : "bg-success";
+}
+
+<div class="container py-5">
+
+        @* caminho: lista / item atual *@
+        <p class="small text-secondary mb-2">
+            <a asp-area="Admin" asp-controller="AdminProdutos" asp-action="Index" class="link-secondary text-decoration-none">Produtos</a> / Produto
+            @numero
+        </p>
+
+        @* título à esquerda, botões à direita *@
+        @* título com o status ao lado; botões à direita *@
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <h1 class="fs-2 fw-bold mb-0">Produto @numero</h1>
+                <span class="d-inline-flex align-items-center gap-2">
+                    <span class="rounded-circle @cor d-inline-block p-1"></span>
+                    @status
+                </span>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-area="Admin" asp-controller="AdminProdutos" asp-action="Editar" asp-route-id="@Model.id" class="btn btn-light border">Editar</a>
+                @* Inativar muda o banco (estoque vai para 0), por isso é um formulário POST *@
+                <form method="post" asp-area="Admin" asp-controller="AdminProdutos" asp-action="Inativar" asp-route-id="@Model.id">
+                    <button type="submit" class="btn btn-light border">Inativar</button>
+                </form>
+                <a asp-area="Admin" asp-controller="AdminProdutos" asp-action="Excluir" asp-route-id="@Model.id" class="btn btn-outline-danger">Excluir</a>
+            </div>
+        </div>
+
+
+
+        <div class="row g-4">
+            <div class="col-12 col-lg-7">
+                <section class="bg-white border rounded-4 p-4 h-100">
+                    <h2 class="fs-5 fw-bold mb-4">Informações</h2>
+                    <p class="text-secondary small text-uppercase fw-semibold mb-1">Nome</p>
+                    <p class="text-break mb-3">@Model.nome</p>
+                    <p class="text-secondary small text-uppercase fw-semibold mb-1">Descrição</p>
+                    <p class="text-break mb-3">@Model.descricao</p>
+                    <div class="row">
+                        <div class="col-6">
+                            <p class="text-secondary small text-uppercase fw-semibold mb-1">Preço</p>
+                            <p class="text-break mb-3">@Model.preco.ToString("C2", CultureInfo.GetCultureInfo("pt-BR"))</p>
+                        </div>
+                        <div class="col-6">
+                            <p class="text-secondary small text-uppercase fw-semibold mb-1">Estoque</p>
+                            <p class="text-break mb-3">@Model.quantidade unidades</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+
+            @* foto principal (imagem; sem foto, mostra a padrão) e, embaixo, as fotos extras *@
+            <div class="col-12 col-lg-5">
+                <section class="bg-white border rounded-4 p-4 h-100">
+                    <h2 class="fs-5 fw-bold mb-4">Fotos</h2>
+                    <div class="ratio ratio-4x3 mb-2">
+                        <img src="@Url.Content(Model.imagem ?? "~/imgs/produtos/produto.jpg")" alt="Foto principal do produto"
+                            class="object-fit-cover rounded-3">
+                    </div>
+                    @* fotos extras (tabela ProdutoImagens), lado a lado *@
+                    <div class="row g-2">
+                        @foreach (var extra in Model.imagens)
+                        {
+                            <div class="col-4">
+                                <div class="ratio ratio-1x1">
+                                    <img src="@Url.Content(extra.arquivo)" alt="Outra foto do produto" class="object-fit-cover rounded-3">
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </section>
+            </div>
+        </div>
+
+
+    </div>

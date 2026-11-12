@@ -1,0 +1,56 @@
+@* Página "Todas as cestas": mostra as cestas de todas as categorias juntas.
+   O HomeController.TotalProduto() manda a lista (Model) e o título (ViewBag.Nome). *@
+@model List<Business.Produto>
+@{
+    ViewData["Title"] = ViewBag.Nome;
+}
+
+<section class="container my-5" id="catalogo">
+
+    @* caminho: Início › Todas as cestas *@
+    <p class="small text-secondary mb-2">
+        <a asp-controller="Home" asp-action="Index" class="link-secondary text-decoration-none">Início</a> › @ViewBag.Nome
+    </p>
+
+    @* título e quantidade de cestas *@
+    <div class="mb-4">
+        @* ViewBag.Nome = o título que o HomeController mandou *@
+        <h1 class="fs-2 fw-bold mb-1">@ViewBag.Nome</h1>
+        @* Model.Count = quantas cestas vieram na lista *@
+        <p class="text-secondary mb-0">@Model.Count cestas</p>
+    </div>
+
+    @* a busca não achou nada: avisa a pessoa *@
+    @if (Model.Count == 0)
+    {
+        <p class="text-secondary">Nenhuma cesta encontrada. Tente outra palavra.</p>
+    }
+
+    @* grade de cestas: o foreach repete o card uma vez para cada cesta da lista *@
+    <div class="row g-4">
+        @foreach (var cesta in Model)
+        {
+            @* coluna do card: 2 por linha no celular, 3 no tablet, 4 no computador *@
+            <div class="col-6 col-md-4 col-lg-3 d-flex flex-column">
+                @* ratio-1x1 = caixa quadrada para a foto *@
+                <div class="ratio ratio-1x1">
+                    @* Url.Content monta o caminho da foto. object-fit-contain mostra a foto inteira, sem cortar *@
+                    <img src="@Url.Content(cesta.imagem ?? "~/imgs/produtos/produto.jpg")" alt="@cesta.nome" class="object-fit-contain rounded-4 p-3">
+                </div>
+                @* nome da cesta *@
+                <p class="mt-2 mb-0 card-novidade">@cesta.nome</p>
+                @* preço 0 = sem preço definido *@
+                @if (cesta.preco == 0)
+                {
+                    <p class="fw-bold text-gold mb-2">Preço sob consulta</p>
+                }
+                else
+                {
+                    <p class="fw-bold text-gold mb-2">@cesta.preco.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</p>
+                }
+                @* botão que abre a página dessa cesta. asp-route-id coloca o id dela no fim do endereço *@
+                <a asp-controller="Home" asp-action="Produto" class="btn btn-dark w-100 mt-auto" asp-route-id="@cesta.id">Solicitar pedido</a>
+            </div>
+        }
+    </div>
+</section>

@@ -1,0 +1,152 @@
+@model Services.Models.PedidoCadastro
+@using System.Globalization
+@{
+    ViewData["Title"] = "Editar pedido";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var pedido = (Business.Pedido)ViewData["Pedido"]!;
+    var numero = "#" + pedido.id.ToString("D6");
+}
+
+<div class="container py-5">
+
+        @* caminho: lista / item atual *@
+        <p class="small text-secondary mb-2">
+            <a asp-area="Admin" asp-controller="AdminPedidos" asp-action="Index" class="link-secondary text-decoration-none">Pedidos</a> / Editando pedido @numero
+        </p>
+
+        <form asp-area="Admin" asp-controller="AdminPedidos" asp-action="Editar" asp-route-id="@pedido.id" method="post">
+
+            @* título à esquerda, botões à direita *@
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                <h1 class="fs-2 fw-bold mb-0">Editando pedido @numero</h1>
+                <div class="d-flex flex-wrap gap-2">
+                    <a asp-area="Admin" asp-controller="AdminPedidos" asp-action="Index" class="btn btn-light border">Cancelar</a>
+                    <button type="submit" class="btn btn-gold">Salvar alterações</button>
+                </div>
+            </div>
+
+            @* erros do Services (ex.: "Selecione a cidade de entrega") *@
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+            @* o que a tela não mostra vai escondido, para não se perder ao salvar *@
+            <input type="hidden" asp-for="ClienteId">
+            <input type="hidden" asp-for="FormaRecebimento">
+            <input type="hidden" asp-for="Endereco.Cidade">
+            <input type="hidden" asp-for="Itens[0].ItemId">
+            @* a tela mostra só o 1º produto; os outros do pedido seguem escondidos *@
+            @for (var i = 1; i < Model.Itens.Count; i++)
+            {
+                <input type="hidden" asp-for="Itens[i].ItemId">
+                <input type="hidden" asp-for="Itens[i].ProdutoId">
+                <input type="hidden" asp-for="Itens[i].Quantidade">
+                <input type="hidden" asp-for="Itens[i].Decoracao">
+            }
+
+            <div class="row g-4">
+                <div class="col-12 col-lg-4">
+                    <section class="bg-white border rounded-4 p-4 h-100">
+                        <h2 class="fs-5 fw-bold mb-4">Produto</h2>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="nomeProduto" class="form-label fw-semibold">Produto</label>
+                                <select class="form-select" id="nomeProduto" asp-for="Itens[0].ProdutoId" asp-items="ViewBag.Produtos">
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label for="quantidade" class="form-label fw-semibold">Quantidade</label>
+                                <input type="number" class="form-control" id="quantidade" asp-for="Itens[0].Quantidade" min="1">
+                            </div>
+                            <div class="col-6">
+                                <label for="status" class="form-label fw-semibold">Status</label>
+                                <select class="form-select" id="status" asp-for="StatusPedido">
+                                    <option>Em preparo</option>
+                                    <option>Pronto</option>
+                                    <option>Entregue</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="textoCartao" class="form-label fw-semibold">Mensagem do cartão</label>
+                                <textarea class="form-control" id="textoCartao" asp-for="CartaoTexto" rows="3"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label for="personalizacao" class="form-label fw-semibold">Personalização</label>
+                                <textarea class="form-control" id="personalizacao" asp-for="Itens[0].Decoracao" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-12 col-lg-4">
+                    <section class="bg-white border rounded-4 p-4 h-100">
+                        <h2 class="fs-5 fw-bold mb-4">Entrega</h2>
+                        <div class="row g-3">
+                            @* data em que o pedido chegou (data_pedido): só mostra, não muda *@
+                            <div class="col-12">
+                                <label for="dataEntrega" class="form-label fw-semibold">Data</label>
+                                <input type="date" class="form-control" id="dataEntrega" value="@pedido.data_pedido.ToString("yyyy-MM-dd")" readonly>
+                            </div>
+                            @* cidade, CEP e bairro: obrigatórios só na Entrega (na Retirada o sistema ignora) *@
+                            <div class="col-12">
+                                <label for="cidade" class="form-label fw-semibold">Cidade</label>
+                                <select class="form-select" id="cidade" asp-for="CidadeEntregaId">
+                                    <option value="">Selecione a cidade</option>
+                                    @foreach (var cidade in (List<Business.CidadeEntrega>)ViewBag.CidadesEntrega)
+                                    {
+                                        <option value="@cidade.id">@cidade.nome — @cidade.taxa.ToString("C2", CultureInfo.GetCultureInfo("pt-BR"))</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label for="cep" class="form-label fw-semibold">CEP</label>
+                                <input type="text" class="form-control" id="cep" asp-for="Endereco.Cep" inputmode="numeric" maxlength="9">
+                            </div>
+                            <div class="col-6">
+                                <label for="bairro" class="form-label fw-semibold">Bairro</label>
+                                <input type="text" class="form-control" id="bairro" asp-for="Endereco.Bairro" maxlength="100">
+                            </div>
+                            <div class="col-9">
+                                <label for="endereco" class="form-label fw-semibold">Rua</label>
+                                <input type="text" class="form-control" id="endereco" asp-for="Endereco.Logradouro">
+                            </div>
+                            @* número da casa, separado da rua *@
+                            <div class="col-3">
+                                <label for="numero" class="form-label fw-semibold">Nº</label>
+                                <input type="text" class="form-control" id="numero" asp-for="Endereco.Numero" maxlength="10">
+                            </div>
+                            <div class="col-12">
+                                <label for="complemento" class="form-label fw-semibold">Comp.</label>
+                                <input type="text" class="form-control" id="complemento" asp-for="Endereco.Complemento">
+                            </div>
+                            <div class="col-12">
+                                <label for="obs" class="form-label fw-semibold">Observação</label>
+                                <textarea class="form-control" id="obs" asp-for="Observacao" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-12 col-lg-4">
+                    <section class="bg-white border rounded-4 p-4 h-100">
+                        <h2 class="fs-5 fw-bold mb-4">Pagamento</h2>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="pagamento" class="form-label fw-semibold">Forma</label>
+                                <select class="form-select" id="pagamento" asp-for="TipoPagamento">
+                                    <option>Dinheiro</option>
+                                    <option>Pix</option>
+                                    <option>Cartão</option>
+                                </select>
+                            </div>
+                            @* o total é calculado (produtos + taxa): só mostra *@
+                            <div class="col-12">
+                                <label for="valorTotal" class="form-label fw-semibold">Total</label>
+                                <input type="text" class="form-control" id="valorTotal" value="@(pedido.Total?.ToString("C2", CultureInfo.GetCultureInfo("pt-BR")))" readonly>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+        </form>
+
+    </div>

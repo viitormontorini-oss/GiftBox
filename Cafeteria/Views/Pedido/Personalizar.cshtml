@@ -1,0 +1,84 @@
+﻿@* ETAPA 1. O PedidoController manda o pedido (Model), as cestas e as quantidades (ViewBag) *@
+@model Services.Models.PedidoCadastro
+@{
+    ViewData["Title"] = "Personalizar pedido";
+    ViewData["NoFooter"] = true;
+    // formato brasileiro de dinheiro
+    var brasil = new System.Globalization.CultureInfo("pt-BR");
+    // cestas do carrinho
+    var cestas = (List<Business.Produto>)ViewBag.Cestas;
+    // quantidade de cada cesta: id -> quantidade
+    var quantidades = (Dictionary<int, int>)ViewBag.Quantidades;
+}
+
+<div class="container py-4">
+
+            <div class="row">
+
+                @* texto de finalizar compra*@
+                <div class="col-12 col-lg-10 mx-auto">
+
+                    @* etapas: a 1 é a atual *@
+                    <div class="d-flex justify-content-between pb-3 mb-4">
+                        <div class="text-center flex-fill">
+                            <span class="badge rounded-pill bg-dark">1</span>
+                            <p class="small fw-semibold mb-0 mt-1">Personalizar</p>
+                        </div>
+                        <div class="text-center flex-fill">
+                            <span class="badge rounded-pill border text-secondary">2</span>
+                            <p class="small text-secondary mb-0 mt-1">Entrega e pagamento</p>
+                        </div>
+                        <div class="text-center flex-fill">
+                            <span class="badge rounded-pill border text-secondary">3</span>
+                            <p class="small text-secondary mb-0 mt-1">Revisar</p>
+                        </div>
+                    </div>
+
+                    <h1 class="fs-3 fw-bold">Personalizar</h1>
+                    <p class="text-secondary">Deixe a cesta com a sua cara. </p>
+
+                    @* repete a linha para cada cesta do carrinho *@
+                    @foreach (var cesta in cestas)
+                    {
+                        <div class="row align-items-center py-3">
+                            @* foto *@
+                            <div class="col-3 col-md-2">
+                                <img src="@Url.Content(cesta.imagem ?? "~/imgs/produtos/produto.jpg")" alt="@cesta.nome" class="img-fluid rounded-3">
+                            </div>
+                            @* nome e preço de uma unidade *@
+                            <div class="col-6 col-md-7">
+                                <p class="fw-semibold mb-0">@cesta.nome</p>
+                                <p class="small text-secondary mb-0">@cesta.preco.ToString("C", brasil) cada</p>
+                            </div>
+                            @* quantidade: quem muda é o carrinho *@
+                            <div class="col-3 text-end">
+                                <p class="small mb-0">@quantidades[cesta.id] un.</p>
+                                <a asp-controller="Carrinho" asp-action="Index" class="small link-secondary">Alterar</a>
+                            </div>
+                        </div>
+                    }
+
+                    @* formulário: envia para PedidoController.Personalizar *@
+                    <form asp-controller="Pedido" asp-action="Personalizar" method="post">
+                        @* mensagem do cartão. asp-for liga o campo ao CartaoTexto e já traz o que foi guardado *@
+                        <div class="border-top pt-4 mt-2">
+                            <label asp-for="CartaoTexto" class="form-label fw-semibold">Mensagem do cartão</label>
+                            <textarea asp-for="CartaoTexto" class="form-control" rows="3" maxlength="120"
+                                placeholder="Feliz aniversário, Ana!"></textarea>
+                            <div class="form-text">Opcional. Até 120 caracteres.</div>
+                        </div>
+
+                        @* observação. maxlength = limite do PedidoServices *@
+                        <div class="pt-4">
+                            <label asp-for="Observacao" class="form-label fw-semibold">Observação</label>
+                            <textarea asp-for="Observacao" class="form-control" rows="2" maxlength="300"
+                                placeholder="Ex.: sem chocolate amargo"></textarea>
+                            <div class="form-text">Opcional. Avise alergias ou pedidos especiais.</div>
+                        </div>
+
+                        @* type="submit" envia o formulário *@
+                        <button type="submit" class="btn btn-dark rounded-pill w-100 mt-4">Continuar</button>
+                    </form>
+                </div>
+            </div>
+        </div>

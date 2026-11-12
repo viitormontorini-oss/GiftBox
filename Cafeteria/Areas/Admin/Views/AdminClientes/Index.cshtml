@@ -1,0 +1,63 @@
+@model List<Business.Cliente>
+@{
+    ViewData["Title"] = "Clientes";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container py-5">
+
+        @* título à esquerda; busca à direita *@
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <h1 class="fs-2 fw-bold mb-0">Clientes</h1>
+            @* busca por nome ou e-mail: formulário GET, o Enter envia *@
+            <form method="get" asp-area="Admin" asp-controller="AdminClientes" asp-action="Index" class="d-flex flex-wrap gap-2">
+                <label for="pesquisa" class="visually-hidden">Pesquisar</label>
+                <input type="search" class="form-control w-auto" id="pesquisa" name="busca" size="28" placeholder="Buscar nome ou e-mail" value="@ViewBag.Busca">
+            </form>
+        </div>
+
+        @* faixa verde depois de salvar (TempData, igual ao Yago) *@
+        @if (TempData["Sucesso"] is string mensagem)
+        {
+            <div class="alert alert-success" role="status">@mensagem</div>
+        }
+
+        @* table-responsive: rola para o lado no celular. align-middle: texto no meio da linha *@
+        <div class="bg-white border rounded-4 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-secondary small text-uppercase fw-semibold">Cliente</th>
+                            <th scope="col" class="text-secondary small text-uppercase fw-semibold">E-mail</th>
+                            <th scope="col" class="text-secondary small text-uppercase fw-semibold">Endereços</th>
+                            <th scope="col" class="text-secondary small text-uppercase fw-semibold">Tel.</th>
+                            <th scope="col" class="text-secondary small text-uppercase fw-semibold"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @* uma linha por cliente do banco (antes eram 3 linhas de exemplo) *@
+                        @foreach (var cliente in Model)
+                        {
+                            var iniciais = string.Concat(cliente.nome.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => char.ToUpper(p[0])));
+                            <tr>
+                                <td><div class="d-flex align-items-center"><span class="avatar flex-shrink-0 d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary-subtle text-secondary-emphasis small fw-semibold me-3">@iniciais</span>@cliente.nome</div></td>
+                                <td>@cliente.email</td>
+                                <td>@cliente.Enderecos.Count(e => e.pedido == null)</td>
+                                <td>@cliente.telefones.Count</td>
+                                <td class="text-end text-nowrap">
+                                    <a asp-area="Admin" asp-controller="AdminClientes" asp-action="Ver" asp-route-id="@cliente.id" class="btn btn-light border btn-sm">Ver</a>
+                                    <a asp-area="Admin" asp-controller="AdminClientes" asp-action="Editar" asp-route-id="@cliente.id" class="btn btn-light border btn-sm">Editar</a>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.Any())
+                        {
+                            <tr><td colspan="5" class="text-center text-secondary py-4">Nenhum cliente cadastrado.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>

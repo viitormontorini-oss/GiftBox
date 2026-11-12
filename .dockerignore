@@ -1,0 +1,11 @@
+**/bin
+**/obj
+.git
+.vs
+.idea
+**/*.user
+.env*
+**/*.pfx
+**/*.pem
+**/appsettings.Local.json
+publish

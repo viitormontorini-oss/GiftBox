@@ -1,0 +1,166 @@
+﻿/* fonte Fraunces em itálico negrito (Google Fonts), só no "o que você sente" do título da home. O @import tem que ser a primeira regra do arquivo */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@1,700&display=swap');
+
+/* estilo so do cliente (catalogo, compra, login e cadastro) */
+
+/* botão redondo do WhatsApp (canto da tela): 56px de largura e altura */
+.botao-whatsapp {
+    width: 3.5rem;
+    height: 3.5rem;
+}
+
+/* banner "Gostou da nossa loja?" no fim da home: foto da cesta cobrindo o fundo,
+   com uma camada escura por cima (o degradê de uma cor só) para o texto branco aparecer */
+.banner-email {
+    background-image: linear-gradient(rgba(26, 23, 19, 0.8), rgba(26, 23, 19, 0.8)), url('../imgs/cta_cesta.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.fonte-fraunces {
+    font-family: 'Fraunces', serif;
+}
+
+/* login, cadastro e senha: painel da direita com fundo dourado */
+.painel-login {
+    background: radial-gradient(ellipse 80% 60% at 50% 70%, #f0d9a0 0%, #c9a23a 45%, #6b5420 75%, #1a1713 100%);
+}
+
+/* foto no meio do painel: 320px no maximo, e no maximo 70% do painel */
+.painel-login-img {
+    width: 20rem;
+    max-width: 70%;
+}
+
+/* pedido enviado: circulo verde do check com tamanho fixo            (80px) */
+.icone-sucesso {
+    width: 5rem;
+    height: 5rem;
+}
+
+/* ===== dourado da Gift Box: um destaque so (#b8913a) ===== */
+
+/* campos: brilho dourado ao clicar, no lugar do azul do Bootstrap */
+.form-control:focus,
+.form-select:focus {
+    border-color: #b8913a;
+    box-shadow: 0 0 0 0.25rem rgba(184, 145, 58, 0.25);
+}
+
+/* radio e checkbox marcados: dourado no lugar do azul */
+.form-check-input:checked {
+    background-color: #b8913a;
+    border-color: #b8913a;
+}
+
+.form-check-input:focus {
+    border-color: #b8913a;
+    box-shadow: 0 0 0 0.25rem rgba(184, 145, 58, 0.25);
+}
+
+/* bolinha com o numero da sacola, no topo */
+.bg-gold {
+    background-color: #b8913a;
+}
+
+/* etiqueta "NOVO" das novidades */
+.text-gold {
+    color: #b8913a;
+}
+
+
+/* fundo creme quente em novidade e não achou a cesta  */
+/* contorno dourado (a mesma regra do cliente.css do projeto HTML) */
+.border-gold {
+    border-color: #b8913a !important;
+}
+
+.bg-creme {
+    background-color: #faf6ef;
+}
+
+/* risquinho dourado curto embaixo dos titulos de seção (uma div vazia logo depois do h2) */
+.risco {
+    width: 2.5rem;
+    height: 3px;
+    border-radius: 2px;
+    background-color: #b8913a;
+}
+
+/* botao secundario com contorno dourado ("Adicionar ao carrinho") */
+.btn-outline-gold {
+    color: #1a1713;
+    background-color: transparent;
+    border-color: #b8913a;
+}
+
+    /* mouse em cima / clicando: enche de dourado e o texto fica branco */
+    .btn-outline-gold:hover,
+    .btn-outline-gold:focus,
+    .btn-outline-gold:active {
+        color: white;
+        background-color: #b8913a;
+        border-color: #b8913a;
+    }
+
+
+/* serve para deixar proporcional o icone da pessoa com o icone da sacola, que possui proporcao diferente (a sacola eh mais larga que alta, e a pessoa eh mais alta que larga) */
+.icone-pessoa {
+    font-size: 1.75rem;
+}
+
+.icone-sacola {
+    font-size: 1.5rem;
+}
+
+
+/* manter os cards com a mesma proporção de tamanho com um limite de 2 linhas de texto, mesmo que o nome do produto seja maior */
+.card-novidade {
+    min-height: 3rem;
+}
+
+/* painel animado no login/cadastro e afins */
+
+/* fundo CINZA CLARO com os presentinhos do fundo original do grupo (fundo-gift-box-sem-cortes.png,
+   recolorido para o cinza). O fundo fica PARADO; só o cartão se mexe.
+   background-image troca só o degradê do .painel-login (dourado/preto) pela imagem;
+   cover = a imagem cobre o painel inteiro sem deformar; background-color é a cor de reserva */
+.painel-animado {
+    background-color: #faf6ef;
+    background-image: url('../imgs/padrao_presentes.png');
+    background-size: cover;
+    background-position: center;
+}
+
+/* cartão de presente: inclinado e flutuando */
+/* inclinação pequena (-2 e -1 grau): quanto mais inclinado, mais o texto borra */
+.cartao {
+    width: 34rem;
+    max-width: 90%;
+    font-family: Georgia, serif;
+    border: 1px solid #d9d5ce;   /* fio cinza: o cartão branco precisa de contorno no fundo claro */
+    transform: rotate(-2deg);
+    animation: flutuar 4s ease-in-out infinite alternate;
+}
+
+@keyframes flutuar {
+    from { transform: rotate(-2deg) translateY(0); }
+    to   { transform: rotate(-1deg) translateY(-14px); }
+}
+
+/* mensagem se escrevendo: aparece da esquerda para a direita, como tinta, e depois some devagar.
+   clip-path recorta o texto; inset(0 100% 0 0) esconde tudo, inset(0) mostra tudo.
+   padding-right: espaço para a última letra em itálico não ser cortada */
+.digitando {
+    display: inline-block;
+    white-space: nowrap;
+    padding-right: 0.2em;
+    animation: escrever 7s ease-in-out infinite;
+}
+
+@keyframes escrever {
+    0%       { clip-path: inset(0 100% 0 0); opacity: 1; }
+    45%, 85% { clip-path: inset(0 0 0 0);    opacity: 1; }
+    95%      { clip-path: inset(0 0 0 0);    opacity: 0; }
+    100%     { clip-path: inset(0 100% 0 0); opacity: 0; }
+}

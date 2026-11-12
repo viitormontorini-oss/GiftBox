@@ -1,0 +1,88 @@
+@model Services.Models.ProdutoCadastro
+@{
+    ViewData["Title"] = "Cadastrar produto";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container py-5">
+
+        <div class="row">
+            <div class="col-12 col-lg-6 mx-auto">
+                @* enctype multipart: necessário para enviar a foto *@
+                <form asp-area="Admin" asp-controller="AdminProdutos" asp-action="Cadastrar" method="post" enctype="multipart/form-data" class="bg-white border rounded-4 p-5">
+                    <h1 class="fs-2 fw-bold">Cadastrar produto</h1>
+                    <p class="text-secondary mb-4">Preencha os dados que vão aparecer no catálogo.</p>
+
+                    @* erros do Services (ex.: "Informe o nome") *@
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="row g-3">
+                        @* nome *@
+                        <div class="col-12">
+                            <label for="nome" class="form-label fw-semibold">Nome</label>
+                            <input type="text" class="form-control" id="nome" asp-for="Nome"
+                                placeholder="Ex.: Cesta café da manhã completa">
+                        </div>
+
+                        @* descricao *@
+                        <div class="col-12">
+                            <label for="descricao" class="form-label fw-semibold">Descrição</label>
+                            <textarea class="form-control" id="descricao" asp-for="Descricao" rows="4"
+                                placeholder="O que vem na cesta, peso, medidas e cores"></textarea>
+                        </div>
+
+                        @* caixa de categoria: a lista vem do controller (ViewBag.Categorias) *@
+                        <div class="col-12">
+                            <label for="categoria" class="form-label fw-semibold">Categoria</label>
+                            @* asp-for liga a caixa ao campo CategoriaId *@
+                            <select class="form-select" id="categoria" asp-for="CategoriaId">
+                                <option value="">Escolha a categoria</option>
+                                @* repete uma opção para cada categoria do banco *@
+                                @foreach (var categoria in (List<Business.Categoria>)ViewBag.Categorias)
+                                {
+                                    <option value="@categoria.id">@categoria.nome</option>
+                                }
+                            </select>
+                        </div>
+
+                        @* preço *@
+                        <div class="col-6">
+                            <label for="preco" class="form-label fw-semibold">Preço</label>
+                            <input type="text" class="form-control" id="preco" asp-for="Preco" placeholder="R$ 0,00">
+                        </div>
+
+                        @* estoque *@
+                        <div class="col-6">
+                            <label for="quantidade" class="form-label fw-semibold">Estoque</label>
+                            <input type="number" class="form-control" id="quantidade" asp-for="Quantidade" min="0">
+                        </div>
+
+                        @* foto principal: a que aparece nas listas e nos cards do site (produtos.imagem) *@
+                        <div class="col-12">
+                            <label for="foto" class="form-label fw-semibold">Foto principal</label>
+                            <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
+                        </div>
+
+                        @* outras fotos: multiple deixa escolher várias; cada uma vira uma linha na tabela ProdutoImagens *@
+                        <div class="col-12">
+                            <label for="fotos" class="form-label fw-semibold">Outras fotos</label>
+                            <input type="file" class="form-control" id="fotos" name="fotos" accept="image/*" multiple>
+                            <div class="form-text">Até 3 fotos além da principal. PNG, JPG ou WebP de até 5 MB</div>
+                        </div>
+                    </div>
+
+                    @* dois botões lado a lado: o principal é o escuro *@
+                    @* os dois agora enviam o formulário; "outro" faz voltar para um cadastro em branco *@
+                    <div class="row g-2 mt-4">
+                        <div class="col-12 col-sm-6"><button type="submit" name="outro" value="1"
+                                class="btn btn-light border w-100 h-100 d-flex align-items-center justify-content-center">Salvar
+                                e cadastrar outro</button></div>
+                        <div class="col-12 col-sm-6"><button type="submit"
+                                class="btn btn-gold w-100 h-100 d-flex align-items-center justify-content-center">Cadastrar
+                                produto</button></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>

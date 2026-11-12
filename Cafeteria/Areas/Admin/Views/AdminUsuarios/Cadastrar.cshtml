@@ -1,0 +1,55 @@
+@model Business.Usuario
+@{
+    ViewData["Title"] = "Cadastrar usuário";
+}
+
+@* cadastro de usuário do Yago, no seu estilo (igual ao Cadastrar produto) *@
+<div class="container py-5">
+
+    <div class="row">
+        <div class="col-12 col-lg-6 mx-auto">
+            <form asp-area="Admin" asp-controller="AdminUsuarios" asp-action="Cadastrar" method="post" class="bg-white border rounded-4 p-5">
+                <h1 class="fs-2 fw-bold">Cadastrar usuário</h1>
+                <p class="text-secondary mb-4">Pessoa da equipe que vai entrar na área do gestor.</p>
+
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="nome" class="form-label fw-semibold">Nome</label>
+                        <input asp-for="nome" class="form-control" maxlength="100" required>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="email" class="form-label fw-semibold">E-mail</label>
+                        <input asp-for="email" type="email" class="form-control" maxlength="100" required>
+                    </div>
+                    <div class="col-6">
+                        <label asp-for="login" class="form-label fw-semibold">Login</label>
+                        <input asp-for="login" class="form-control" maxlength="100" autocomplete="off" required>
+                    </div>
+                    <div class="col-6">
+                        <label for="senha" class="form-label fw-semibold">Senha</label>
+                        <input id="senha" name="senha" type="password" class="form-control" minlength="6" maxlength="100" autocomplete="new-password" required>
+                        <div class="form-text">Entre 6 e 100 caracteres.</div>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="nivel" class="form-label fw-semibold">Nível de acesso</label>
+                        <select asp-for="nivel" class="form-select" required>
+                            <option value="Gestor">Gestor</option>
+                            <option value="Administrador">Administrador</option>
+                        </select>
+                        <div class="form-text">Administradores também cadastram usuários e cidades de entrega.</div>
+                    </div>
+                </div>
+
+                <div class="row g-2 mt-4">
+                    <div class="col-12 col-sm-6"><a asp-area="Admin" asp-controller="AdminUsuarios" asp-action="Index"
+                            class="btn btn-light border w-100 h-100 d-flex align-items-center justify-content-center">Cancelar</a></div>
+                    <div class="col-12 col-sm-6"><button type="submit"
+                            class="btn btn-gold w-100 h-100 d-flex align-items-center justify-content-center">Cadastrar usuário</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

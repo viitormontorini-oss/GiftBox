@@ -1,0 +1,107 @@
+@{
+    // seção atual = nome do controller (AdminPedidos, AdminProdutos, AdminClientes...)
+    var paginaAtual = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Gift Box</title>
+
+    @* Bootstrap CSS *@
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    @* Bootstrap Icons *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    @* estilo só do gestor (dourado): btn-gold, text-gold, border-gold, avatar *@
+    <link rel="stylesheet" href="~/css/gestor.css" asp-append-version="true" />
+</head>
+@* bg-light: fundo cinza claro; as caixas brancas se destacam *@
+<body class="bg-light">
+
+    @* navbar do gestor *@
+    <nav class="bg-white border-bottom">
+        <div class="container d-flex flex-wrap align-items-center gap-3 py-3">
+
+            <a asp-area="Admin" asp-controller="AdminPrincipal" asp-action="Index"
+               class="d-flex align-items-center text-decoration-none link-dark">
+                <img src="~/imgs/gift_box_logo.png" alt="Logo Gift Box" width="44" class="rounded-circle me-2">
+                <div>
+                    <p class="fw-bold mb-0">GIFT BOX</p>
+                    <p class="text-gold small mb-0">Área do gestor</p>
+                </div>
+            </a>
+
+            @* ms-md-4: afasta os links da logo só a partir do tablet *@
+            <ul class="nav gap-4 small ms-md-4 me-auto">
+                <li class="nav-item">
+                    <a asp-area="Admin" asp-controller="AdminPrincipal" asp-action="Index"
+                       class="nav-link ps-0 pe-2 @(paginaAtual == "AdminPrincipal" ? "link-dark fw-bold" : "link-secondary")">Início</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-area="Admin" asp-controller="AdminPedidos" asp-action="Index"
+                       class="nav-link ps-0 pe-2 @(paginaAtual == "AdminPedidos" ? "link-dark fw-bold" : "link-secondary")">Pedidos</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-area="Admin" asp-controller="AdminProdutos" asp-action="Index"
+                       class="nav-link ps-0 pe-2 @(paginaAtual == "AdminProdutos" ? "link-dark fw-bold" : "link-secondary")">Produtos</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-area="Admin" asp-controller="AdminClientes" asp-action="Index"
+                       class="nav-link ps-0 pe-2 @(paginaAtual == "AdminClientes" ? "link-dark fw-bold" : "link-secondary")">Clientes</a>
+                </li>
+                @* Usuários e Cidades: só para o nível Administrador (igual ao Yago) *@
+                @if (User.IsInRole("Administrador"))
+                {
+                    <li class="nav-item">
+                        <a asp-area="Admin" asp-controller="AdminUsuarios" asp-action="Index"
+                           class="nav-link ps-0 pe-2 @(paginaAtual == "AdminUsuarios" ? "link-dark fw-bold" : "link-secondary")">Usuários</a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-area="Admin" asp-controller="AdminCidadesEntrega" asp-action="Index"
+                           class="nav-link ps-0 pe-2 @(paginaAtual == "AdminCidadesEntrega" ? "link-dark fw-bold" : "link-secondary")">Cidades</a>
+                    </li>
+                }
+            </ul>
+
+            @* botão de cadastro conforme a página *@
+            @if (paginaAtual == "AdminPedidos")
+            {
+                <a asp-area="Admin" asp-controller="AdminPedidos" asp-action="Cadastrar" class="btnCadastrarPedido btn btn-gold">+ Cadastrar pedido</a>
+            }
+            else if (paginaAtual == "AdminClientes")
+            {
+                <a asp-area="Admin" asp-controller="AdminClientes" asp-action="Cadastrar" class="btnCadastrarCliente btn btn-gold">+ Cadastrar cliente</a>
+            }
+            else if (paginaAtual == "AdminProdutos")
+            {
+                <a asp-area="Admin" asp-controller="AdminProdutos" asp-action="Cadastrar" class="btnCadastrarProduto btn btn-gold">+ Cadastrar produto</a>
+            }
+            else if (paginaAtual == "AdminUsuarios")
+            {
+                <a asp-area="Admin" asp-controller="AdminUsuarios" asp-action="Cadastrar" class="btnCadastrarUsuario btn btn-gold">+ Cadastrar usuário</a>
+            }
+            else if (paginaAtual == "AdminCidadesEntrega")
+            {
+                <a asp-area="Admin" asp-controller="AdminCidadesEntrega" asp-action="Cadastrar" class="btnCadastrarCidade btn btn-gold">+ Cadastrar cidade</a>
+            }
+
+            @* nome de quem entrou (no lugar do "Gestor" fixo) *@
+            <span class="text-secondary">@User.Identity?.Name</span>
+            @* sair agora é um formulário (POST), igual ao Yago; o botão tem a mesma cara do link *@
+            <form asp-area="Admin" asp-controller="AdminLogin" asp-action="Logout" method="post" class="d-inline">
+                <button type="submit" class="btn btn-link link-secondary text-decoration-none p-0">Sair</button>
+            </form>
+        </div>
+    </nav>
+
+    @* Conteúdo da Página: cada tela traz o seu próprio <div class="container ..."> *@
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,132 @@
+@model Services.Models.ClienteCadastro
+@{
+    ViewData["Title"] = "Editar cliente";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var id = (int)ViewData["Id"]!;
+    var numero = "#" + id.ToString("D5");
+}
+
+<div class="container py-5">
+
+        @* caminho: lista / item atual *@
+        <p class="small text-secondary mb-2">
+            <a asp-area="Admin" asp-controller="AdminClientes" asp-action="Index" class="link-secondary text-decoration-none">Clientes</a> / Editando
+            cliente @numero
+        </p>
+
+        <form asp-area="Admin" asp-controller="AdminClientes" asp-action="Editar" asp-route-id="@id" method="post">
+
+            @* título à esquerda, botões à direita *@
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                <h1 class="fs-2 fw-bold mb-0">Editando cliente @numero</h1>
+                <div class="d-flex flex-wrap gap-2">
+                    <a asp-area="Admin" asp-controller="AdminClientes" asp-action="Index" class="btn btn-light border">Cancelar</a>
+                    <button type="submit" class="btn btn-gold">Salvar alterações</button>
+                </div>
+            </div>
+
+            @* erros do Services (ex.: "Informe um e-mail válido") *@
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+            @* o que a tela não mostra vai escondido, para não se perder ao salvar *@
+            <input type="hidden" asp-for="Login">
+
+            @* row do lado esquerdo*@
+            <div class="row g-4">
+                <div class="col-12 col-lg-5">
+                    <section class="bg-white border rounded-4 p-4 h-100">
+                        <h2 class="fs-5 fw-bold mb-4">Dados pessoais</h2>
+                        <div class="row g-3">
+
+                            <div class="col-12">
+                                <label for="nome" class="form-label fw-semibold">Nome</label>
+                                <input type="text" class="form-control" id="nome" asp-for="Nome">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="email" class="form-label fw-semibold">E-mail</label>
+                                <input type="email" class="form-control" id="email" asp-for="Email">
+                            </div>
+
+                            @* campo digitável: é aqui que o gestor troca o número do cliente *@
+                            <div class="col-12">
+                                <label asp-for="Telefone" class="form-label fw-semibold">Telefone</label>
+                                <input asp-for="Telefone" type="tel" class="form-control" maxlength="20" placeholder="(17) 99999-9999">
+                            </div>
+
+                            @* "collapse show" = bloco do segundo telefone já aberto *@
+                            @{ string classeOutroTelefone = "collapse show"; }
+                            @* não tem segundo telefone: o bloco começa fechado e aparece o botão para abrir *@
+                            @if (string.IsNullOrWhiteSpace(Model.OutroTelefone))
+                            {
+                                classeOutroTelefone = "collapse";
+                                @* data-bs-toggle="collapse": o Bootstrap abre e fecha um bloco ao clicar. data-bs-target: qual bloco *@
+                                <div class="col-12"><button type="button" class="btn btn-link link-dark fw-semibold text-decoration-none p-0" data-bs-toggle="collapse" data-bs-target="#outroTelefone">+ Adicionar telefone</button></div>
+                            }
+
+                            @* segundo telefone: deixar em branco e salvar remove o número *@
+                            <div class="col-12 @classeOutroTelefone" id="outroTelefone">
+                                <label asp-for="OutroTelefone" class="form-label fw-semibold">Outro telefone</label>
+                                <input asp-for="OutroTelefone" type="tel" class="form-control" maxlength="20" placeholder="(17) 99999-9999">
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+                @* row do lado direito *@
+                <div class="col-12 col-lg-7">
+                    <section class="bg-white border rounded-4 p-4 h-100">
+                        <h2 class="fs-5 fw-bold mb-4">Endereços</h2>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="endereco" class="form-label fw-semibold">Endereço</label>
+
+                                <select class="form-select" id="endereco">
+                                    <option selected>Endereço 1</option>
+                                </select>
+
+                            </div>
+
+
+                            @* a rua já vem com o número junto ("Rua das Flores, 120"); o Nº só soma se for preenchido *@
+                            <div class="col-12 col-sm-4">
+                                <label for="cep" class="form-label fw-semibold">CEP</label>
+                                <input type="text" class="form-control" id="cep" asp-for="Endereco.Cep"
+                                    inputmode="numeric">
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="logradouro" class="form-label fw-semibold">Rua</label>
+                                <input type="text" class="form-control" id="logradouro" asp-for="Endereco.Logradouro">
+                            </div>
+                            <div class="col-12 col-sm-2">
+                                <label for="numero" class="form-label fw-semibold">Nº</label>
+                                <input type="text" class="form-control" id="numero" asp-for="Endereco.Numero" maxlength="10">
+                            </div>
+
+                            <div class="col-12 col-sm-6">
+                                <label for="bairro" class="form-label fw-semibold">Bairro</label>
+                                <input type="text" class="form-control" id="bairro" asp-for="Endereco.Bairro">
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="complemento" class="form-label fw-semibold">Complemento</label>
+                                <input type="text" class="form-control" id="complemento" asp-for="Endereco.Complemento">
+                            </div>
+
+                            @* so as 4 cidades de entrega, igual na compra *@
+                            <div class="col-12">
+                                <label for="cidade" class="form-label fw-semibold">Cidade</label>
+                                <select class="form-select" id="cidade" asp-for="Endereco.Cidade">
+                                    <option>Itápolis</option>
+                                    <option>Tapinas</option>
+                                    <option>Ibitinga</option>
+                                    <option>Tabatinga</option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+        </form>
+
+    </div>

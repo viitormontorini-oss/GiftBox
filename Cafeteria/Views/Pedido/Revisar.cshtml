@@ -1,0 +1,167 @@
+﻿@* ETAPA 3. Mostra tudo o que foi escolhido. O PedidoController manda o pedido (Model) e os valores (ViewBag) *@
+@model Services.Models.PedidoCadastro
+@{
+    ViewData["Title"] = "Revisar pedido";
+    ViewData["NoFooter"] = true;
+    // formato brasileiro de dinheiro
+    var brasil = new System.Globalization.CultureInfo("pt-BR");
+    // cestas do carrinho
+    var cestas = (List<Business.Produto>)ViewBag.Cestas;
+    // quantidade de cada cesta: id -> quantidade
+    var quantidades = (Dictionary<int, int>)ViewBag.Quantidades;
+}
+
+ @* conteudo principal *@
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-12 col-lg-10 mx-auto">
+
+                    @* etapas*@
+                    <div class="d-flex justify-content-between pb-3 mb-4">
+                        @*produto personalização *@
+                        <div class="text-center flex-fill">
+                            <a asp-controller="Pedido" asp-action="Personalizar" class="badge rounded-pill bg-secondary text-decoration-none">1</a>
+                            <p class="small mb-0 mt-1"><a asp-controller="Pedido" asp-action="Personalizar"
+                                    class="link-secondary text-decoration-none">Personalizar</a></p>
+                        </div>
+                        @*pagamento e entrega *@
+                        <div class="text-center flex-fill">
+                            <a asp-controller="Pedido" asp-action="EnderecoPagamento" class="badge rounded-pill bg-secondary text-decoration-none">2</a>
+                            <p class="small  mb-0 mt-1">
+                                <a asp-controller="Pedido" asp-action="EnderecoPagamento" class="link-secondary text-decoration-none">Entrega
+                                    e pagamento</a>
+                                    </p>
+                        </div>
+                        @*confirmar e revisar *@
+                        <div class="text-center flex-fill">
+                            <span class="badge rounded-pill bg-dark">3</span>
+                            <p class="small fw-semibold mb-0 mt-1">Revisar</p>
+                        </div>
+                    </div>
+
+                    @* revisar pedido *@
+                    <h1 class="fs-3 fw-bold">Revisar pedido</h1>
+                    <p class="text-secondary">Confira tudo antes de enviar.</p>
+
+                    @* erros do PedidoServices, se não conseguir salvar *@
+                    <div asp-validation-summary="All" class="text-danger small"></div>
+
+                    @* repete a linha para cada cesta do carrinho *@
+                    @foreach (var cesta in cestas)
+                    {
+                        <div class="row align-items-center py-3">
+                            <div class="col-3 col-md-2">
+                                <img src="@Url.Content(cesta.imagem ?? "~/imgs/produtos/produto.jpg")" alt="@cesta.nome" class="img-fluid rounded-3">
+                            </div>
+                            <div class="col-6 col-md-7">
+                                <p class="fw-semibold mb-0">@cesta.nome</p>
+                                <p class="small text-secondary mb-0">@quantidades[cesta.id] un.</p>
+                            </div>
+                            @* preço x quantidade *@
+                            <div class="col-3 text-end">@((cesta.preco * quantidades[cesta.id]).ToString("C", brasil))</div>
+                        </div>
+                    }
+
+
+                    @*personalização*@
+                    <div>
+                        @* personalização div*@
+                        <div class="border-top py-3">
+                            <div class="row">
+                                <div class="col-12 col-md-4">
+                                    <p class="small fw-semibold mb-1">Personalização</p>
+                                    <a asp-controller="Pedido" asp-action="Personalizar" class="link-secondary small">Alterar</a>
+                                </div>
+                                <div class="col-6 col-md-4 text-break">
+                                    <p class="small fw-semibold mb-1">Mensagem do cartão</p>
+                                    @* o que a pessoa escreveu na etapa 1 *@
+                                    <p class="small text-secondary mb-0">@Model.CartaoTexto</p>
+                                </div>
+                                <div class="col-6 col-md-4 text-break">
+                                    <p class="small fw-semibold mb-1">Observação</p>
+                                    <p class="small text-secondary mb-0">@Model.Observacao</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        @* entrega ou retirada*@
+                        <div class="border-top py-3">
+                            <div class="row">
+                                <div class="col-12 col-md-4">
+                                    <p class="small fw-semibold mb-1">Entrega</p>
+                                    <a asp-controller="Pedido" asp-action="EnderecoPagamento" class="link-secondary small">Alterar</a>
+                                </div>
+                                <div class="col-6 col-md-4 text-break">
+                                    @* mostra o bloco certo conforme a escolha da etapa 2 *@
+                                    @if (Model.FormaRecebimento == "Entrega")
+                                    {
+                                        <p class="small fw-semibold mb-1">Entregar para</p>
+                                        <p class="small text-secondary mb-0">@Model.NomeRecebe</p>
+                                        <p class="small text-secondary mb-0">@Model.Endereco.Logradouro, @Model.Endereco.Numero</p>
+                                        <p class="small text-secondary mb-0">@Model.Endereco.Bairro · @ViewBag.CidadeNome</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="small fw-semibold mb-1">Retirar na loja</p>
+                                        <p class="small text-secondary mb-0">@Model.NomeRecebe</p>
+                                    }
+                                </div>
+                                <div class="col-6 col-md-4 text-break">
+                                    <p class="small fw-semibold mb-1">Contato</p>
+                                    <p class="small text-secondary mb-0">@Model.Celular</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        @*pagamento*@
+                        <div class="border-top py-3">
+                            <div class="row">
+                                <div class="col-12 col-md-4">
+                                    <p class="small fw-semibold mb-1">Pagamento</p>
+                                    <a asp-controller="Pedido" asp-action="EnderecoPagamento" class="link-secondary small">Alterar</a>
+                                </div>
+                                <div class="col-6 col-md-4 text-break">
+                                    <p class="small fw-semibold mb-1">Forma de pagamento</p>
+                                    <p class="small text-secondary mb-0">@Model.TipoPagamento</p>
+                                </div>
+                                <div class="col-6 col-md-4 text-break">
+                                    @* só o Pix tem esse aviso *@
+                                    @if (Model.TipoPagamento == "Pix")
+                                    {
+                                        <p class="small text-secondary mb-0">A chave é enviada no WhatsApp.</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        @*contas*@
+
+                        <div class="border-top pt-3">
+                            @* os textos vêm prontos do controller *@
+                            <div class="d-flex justify-content-between small text-secondary">
+                                <span>Produtos</span>
+                                <span>@ViewBag.ProdutosTexto</span>
+                            </div>
+                            <div class="d-flex justify-content-between small text-secondary">
+                                <span>Frete</span>
+                                <span>@ViewBag.FreteTexto</span>
+                            </div>
+
+                            @* total *@
+                            <div class="d-flex justify-content-between fw-bold border-top pt-2 mt-2">
+                                <span>Total</span>
+                                <span>@ViewBag.TotalTexto</span>
+                            </div>
+                            @* envia para PedidoController.Confirmar, que salva o pedido no banco *@
+                            <form asp-controller="Pedido" asp-action="Confirmar" method="post">
+                                <button type="submit" class="btn btn-dark rounded-pill w-100 mt-4">Confirmar pedido</button>
+                            </form>
+                            <p class="small text-secondary text-center mt-2 mb-0">A equipe confirma pelo WhatsApp.
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>

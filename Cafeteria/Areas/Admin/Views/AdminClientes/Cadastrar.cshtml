@@ -1,0 +1,103 @@
+@model Services.Models.ClienteCadastro
+@{
+    ViewData["Title"] = "Cadastrar cliente";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container py-5">
+
+    <div class="row">
+        <div class="col-12 col-lg-6 mx-auto">
+            <form asp-area="Admin" asp-controller="AdminClientes" asp-action="Cadastrar" method="post" class="bg-white border rounded-4 p-5">
+                <h1 class="fs-2 fw-bold">Cadastrar cliente</h1>
+                <p class="text-secondary mb-4">Preencha os dados do cliente e o endereço.</p>
+
+                @* erros do Services (ex.: "Este e-mail já está cadastrado") *@
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+                    @* nome *@
+                    <div class="col-12">
+                        <label asp-for="Nome" class="form-label fw-semibold">Nome</label>
+                        <input asp-for="Nome" class="form-control" maxlength="100" placeholder="Ex.: Juliana Fabiana Italiana" required>
+                    </div>
+
+                    @* e-mail *@
+                    <div class="col-12">
+                        <label asp-for="Email" class="form-label fw-semibold">E-mail</label>
+                        <input asp-for="Email" type="email" class="form-control" maxlength="100" placeholder="nome@email.com" required>
+                    </div>
+
+                    @* telefones (lista telefones do Cliente) *@
+                    <div class="col-12">
+                        <label asp-for="Telefone" class="form-label fw-semibold">Telefone</label>
+                        <input asp-for="Telefone" type="tel" class="form-control" maxlength="20" placeholder="(17) 99999-9999" required>
+                    </div>
+                    <div class="col-12">
+                        @* data-bs-toggle="collapse": o Bootstrap abre e fecha um bloco ao clicar. data-bs-target: qual bloco *@
+                        <button type="button" class="btn btn-link link-dark fw-semibold text-decoration-none p-0" data-bs-toggle="collapse" data-bs-target="#outroTelefone">+ Adicionar telefone</button>
+                    </div>
+                    @* segundo telefone: "collapse" faz o bloco começar fechado *@
+                    <div class="col-12 collapse" id="outroTelefone">
+                        <label asp-for="OutroTelefone" class="form-label fw-semibold">Outro telefone</label>
+                        <input asp-for="OutroTelefone" type="tel" class="form-control" maxlength="20" placeholder="(17) 99999-9999">
+                    </div>
+
+                    @* o Model não tem número: o Nº vai junto da rua ao salvar ("Rua das Flores, 120"); "+ Adicionar endereço" é só visual *@
+                    <div class="col-12">
+                        <h2 class="fs-5 fw-bold mt-3 mb-0">Endereço</h2>
+                    </div>
+
+                    <div class="col-12 col-sm-4">
+                        <label for="cep" class="form-label fw-semibold">CEP</label>
+                        <input type="text" class="form-control" id="cep" asp-for="Endereco.Cep" inputmode="numeric" maxlength="9" placeholder="14900-000" required>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label for="logradouro" class="form-label fw-semibold">Rua</label>
+                        <input type="text" class="form-control" id="logradouro" asp-for="Endereco.Logradouro" maxlength="150" placeholder="Rua das Flores" required>
+                    </div>
+
+                    <div class="col-12 col-sm-2">
+                        <label for="numero" class="form-label fw-semibold">Nº</label>
+                        <input type="text" class="form-control" id="numero" asp-for="Endereco.Numero" maxlength="10" placeholder="120">
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label for="bairro" class="form-label fw-semibold">Bairro</label>
+                        <input type="text" class="form-control" id="bairro" asp-for="Endereco.Bairro" maxlength="100" placeholder="Centro" required>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label for="complemento" class="form-label fw-semibold">Complemento (opcional)</label>
+                        <input type="text" class="form-control" id="complemento" asp-for="Endereco.Complemento" maxlength="100" placeholder="Apartamento">
+                    </div>
+
+                    @* só as 4 cidades de entrega, igual na compra *@
+                    <div class="col-12">
+                        <label for="cidade" class="form-label fw-semibold">Cidade</label>
+                        <select class="form-select" id="cidade" asp-for="Endereco.Cidade" required>
+                            <option>Itápolis</option>
+                            <option>Tapinas</option>
+                            <option>Ibitinga</option>
+                            <option>Tabatinga</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="button" class="btn btn-link link-dark fw-semibold text-decoration-none p-0">+ Adicionar endereço</button>
+                    </div>
+                </div>
+
+                @* dois botões lado a lado: o principal é o dourado *@
+                <div class="row g-2 mt-4">
+                    <div class="col-12 col-sm-6"><a asp-area="Admin" asp-controller="AdminClientes" asp-action="Index"
+                            class="btn btn-light border w-100 h-100 d-flex align-items-center justify-content-center">Cancelar</a></div>
+                    <div class="col-12 col-sm-6"><button type="submit"
+                            class="btn btn-gold w-100 h-100 d-flex align-items-center justify-content-center">Cadastrar cliente</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

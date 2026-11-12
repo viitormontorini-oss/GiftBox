@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Pedido enviado";
+    ViewData["NoFooter"] = true;
+}
+
+<div class="container py-5">
+        <div class="row">
+
+            <div class="col-12 col-md-8 col-lg-5 mx-auto text-center">
+
+                @* d-inline serve para se comportar baseado no elemento (tamanho)*@
+
+                @* circulo verde no meio*@
+                <div class="icone-sucesso rounded-circle bg-success-subtle text-success d-inline-flex align-items-center justify-content-center mb-4"> @* icone-sucesso (cliente.css) define o tamanho *@
+                    <span class="bi bi-check-lg fs-1"></span> @* icone de check *@
+                </div>
+
+                @* texto simples*@
+                <h1 class="fs-2 fw-bold mb-2">Pedido enviado</h1>
+                <p class="text-secondary mb-4">Pedido nº @ViewBag.Numero. A equipe confirma os detalhes pelo WhatsApp.</p>
+                @*atendimento*@
+                <div class="d-flex align-items-center gap-3 border rounded-4 p-3 text-start mb-4">
+                    @* text-start as duas pai e filho começa no começo da borda*@
+                    <span class="bi bi-whatsapp fs-2 text-success"></span> @*icone wtts*@
+
+                    @* atendimento no wtts *@
+                    <div> @* serve para separar o filho da div acima, caso contraria ficaria lado a lado*@
+                        <p class="fw-semibold mb-0">Atendimento via WhatsApp</p>
+                        <p class="text-secondary mb-0">(16) 98237-3442</p>
+                    </div>
+                </div>
+
+                @*button simples*@
+                <a asp-controller="Home" asp-action="Index" class="btn btn-dark rounded-pill w-100 py-2">Voltar ao
+                    catálogo</a>
+            </div>
+        </div>
+    </div>

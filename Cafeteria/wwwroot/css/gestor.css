@@ -1,0 +1,52 @@
+
+
+/* botao principal dourado: "+ Cadastrar produto", "Salvar alteracoes", "Concluir pedido" */
+.btn-gold {
+    background-color: #b8913a;
+    border-color: #b8913a;
+    color: white;
+}
+
+/* mouse em cima / clicando: dourado um pouco mais escuro */
+.btn-gold:hover,
+.btn-gold:focus,
+.btn-gold:active {
+    background-color: #9e7a2f;
+    border-color: #9e7a2f;
+    color: white;
+}
+
+/* texto dourado: "AREA DO GESTOR" embaixo do logo */
+.text-gold {
+    color: #b8913a;
+}
+
+/* linha dourada embaixo da aba aberta no menu (Pedidos, Produtos ou Clientes) */
+.border-gold {
+    border-color: #b8913a !important;
+}
+
+/* checkbox marcado (lista de pedidos): dourado no lugar do azul padrao do Bootstrap */
+.form-check-input:checked {
+    background-color: #b8913a;
+    border-color: #b8913a;
+}
+
+/* contorno que aparece quando clica no checkbox: dourado claro no lugar do azul */
+.form-check-input:focus {
+    border-color: #b8913a;
+    box-shadow: 0 0 0 0.25rem rgba(184, 145, 58, 0.25);
+}
+
+/* circulo com as iniciais do cliente (JF, ML...): tamanho fixo, para todos ficarem iguais
+   sem isso, o circulo acompanha a largura das letras ("ML" e mais largo que "JF") */ 
+.avatar {
+    width: 2.5rem;  
+    height: 2.5rem;
+}
+
+/* versao maior, na tela do cliente */
+.avatar-lg {
+    width: 3.5rem;
+    height: 3.5rem;
+}

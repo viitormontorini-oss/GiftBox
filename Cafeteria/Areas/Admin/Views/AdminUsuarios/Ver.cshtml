@@ -1,0 +1,35 @@
+@model Business.Usuario
+@{
+    ViewData["Title"] = "Exibir usuário";
+}
+
+@* detalhes do usuário do Yago, no seu estilo (igual ao Exibir cliente) *@
+<div class="container py-5">
+
+        <p class="small text-secondary mb-2">
+            <a asp-area="Admin" asp-controller="AdminUsuarios" asp-action="Index" class="link-secondary text-decoration-none">Usuários</a> / @Model.nome
+        </p>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <h1 class="fs-2 fw-bold mb-0">@Model.nome</h1>
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-area="Admin" asp-controller="AdminUsuarios" asp-action="Editar" asp-route-id="@Model.id" class="btn btn-light border">Editar</a>
+                <a asp-area="Admin" asp-controller="AdminUsuarios" asp-action="Excluir" asp-route-id="@Model.id" class="btn btn-outline-danger">Excluir</a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-lg-6">
+                <section class="bg-white border rounded-4 p-4 h-100">
+                    <h2 class="fs-5 fw-bold mb-4">Dados de acesso</h2>
+                    <p class="text-secondary small text-uppercase fw-semibold mb-1">E-mail</p>
+                    <p class="text-break mb-3">@Model.email</p>
+                    <p class="text-secondary small text-uppercase fw-semibold mb-1">Login</p>
+                    <p class="text-break mb-3">@Model.login</p>
+                    <p class="text-secondary small text-uppercase fw-semibold mb-1">Nível</p>
+                    <p class="text-break mb-3">@Model.nivel</p>
+                </section>
+            </div>
+        </div>
+
+    </div>

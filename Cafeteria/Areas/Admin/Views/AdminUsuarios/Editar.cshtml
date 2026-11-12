@@ -1,0 +1,58 @@
+@model Services.Models.UsuarioEdicao
+@{
+    ViewData["Title"] = "Editar usuário";
+    var id = (int)ViewData["Id"]!;
+}
+
+@* edição de usuário do Yago, no seu estilo *@
+<div class="container py-5">
+
+    <p class="small text-secondary mb-2">
+        <a asp-area="Admin" asp-controller="AdminUsuarios" asp-action="Index" class="link-secondary text-decoration-none">Usuários</a> / Editando usuário
+    </p>
+
+    <div class="row">
+        <div class="col-12 col-lg-6 mx-auto">
+            <form asp-area="Admin" asp-controller="AdminUsuarios" asp-action="Editar" asp-route-id="@id" method="post" class="bg-white border rounded-4 p-5">
+                <h1 class="fs-2 fw-bold">Editar usuário</h1>
+                <p class="text-secondary mb-4">Deixe a senha em branco para manter a atual.</p>
+
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label asp-for="Nome" class="form-label fw-semibold">Nome</label>
+                        <input asp-for="Nome" class="form-control" maxlength="100" required>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Email" class="form-label fw-semibold">E-mail</label>
+                        <input asp-for="Email" type="email" class="form-control" maxlength="100" required>
+                    </div>
+                    <div class="col-6">
+                        <label asp-for="Login" class="form-label fw-semibold">Login</label>
+                        <input asp-for="Login" class="form-control" maxlength="100" required>
+                    </div>
+                    <div class="col-6">
+                        <label for="NovaSenha" class="form-label fw-semibold">Nova senha (opcional)</label>
+                        <input id="NovaSenha" name="NovaSenha" type="password" autocomplete="new-password" minlength="6" maxlength="100" class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Nivel" class="form-label fw-semibold">Nível</label>
+                        <select asp-for="Nivel" class="form-select">
+                            <option>Gestor</option>
+                            <option>Administrador</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-2 mt-4">
+                    <div class="col-12 col-sm-6"><a asp-area="Admin" asp-controller="AdminUsuarios" asp-action="Index"
+                            class="btn btn-light border w-100 h-100 d-flex align-items-center justify-content-center">Cancelar</a></div>
+                    <div class="col-12 col-sm-6"><button type="submit"
+                            class="btn btn-gold w-100 h-100 d-flex align-items-center justify-content-center">Salvar alterações</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

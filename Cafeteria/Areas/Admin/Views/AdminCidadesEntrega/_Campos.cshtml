@@ -1,0 +1,25 @@
+@model Business.CidadeEntrega
+
+@* campos da cidade (usados no Cadastrar e no Editar), no seu estilo *@
+<div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+<div class="row g-3">
+    <div class="col-12">
+        <label asp-for="nome" class="form-label fw-semibold">Cidade</label>
+        <input asp-for="nome" class="form-control" maxlength="100" placeholder="Ex.: Itápolis" required>
+    </div>
+    <div class="col-12">
+        <label asp-for="taxa" class="form-label fw-semibold">Taxa de entrega</label>
+        <input asp-for="taxa" type="text" inputmode="decimal" class="form-control" placeholder="R$ 0,00" required>
+        <div class="form-text">Use vírgula para os centavos. Informe 0 para entrega gratuita.</div>
+    </div>
+    @* caixa da cidade ativa: desmarcada, a cidade some das opções de entrega dos pedidos novos (site e gestor).
+       Os pedidos antigos continuam com a cidade e a taxa da época. Texto trocado para ficar mais claro *@
+    <div class="col-12">
+        <div class="form-check">
+            <input asp-for="ativa" class="form-check-input">
+            <label asp-for="ativa" class="form-check-label">Ainda entregamos nesta cidade</label>
+        </div>
+        <div class="form-text">Desmarque quando a loja parar de entregar aqui.</div>
+    </div>
+</div>

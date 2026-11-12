@@ -1,0 +1,388 @@
+﻿@* verificar a autenticação *@
+@using Microsoft.AspNetCore.Authentication
+@{
+    var login = await Context.AuthenticateAsync("Cliente");
+    bool logado = login.Succeeded;
+    string? nomeCliente = login.Principal?.Identity?.Name;
+
+    // só o primeiro nome, com a 1ª letra maiúscula: "renan adada" -> "Renan"
+    string nome = nomeCliente ?? "";                 // o nome completo (ou vazio)
+    nome = nome.Trim();                              // tira espaços das pontas
+    string[] palavras = nome.Split(' ');             // corta nos espaços: ["renan", "adada"]
+    string primeiroNome = palavras[0];               // a primeira palavra: "renan"
+
+    if (primeiroNome.Length > 0)
+    {
+        string primeiraLetra = primeiroNome.Substring(0, 1).ToUpper();   // "R"
+        string resto = primeiroNome.Substring(1);                        // "enan"
+        primeiroNome = primeiraLetra + resto;                            // "Renan"
+    }
+}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] - Gift Box</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/client.css" /> 
+</head>
+
+<body>
+
+    @* faixa preta em cima da header*@
+    <div class="bg-dark text-white text-center small py-2">
+        Entrega no mesmo dia para pedidos de até 14hrs
+    </div>
+
+    @* header com navbar border-bottom adiciona borda na parte de baixo do site no caso na header  *@
+    <header class="border-bottom">
+
+        @* logo container + padding y -3 + display-flex e align=items-center centraliza o texto  *@
+        <div class="container py-3 d-flex align-items-center">
+            @* texto e imagem *@
+            <a asp-controller="Home" asp-action="Index" class="d-flex align-items-center text-decoration-none text-dark">
+                <img src="~/imgs/gift_box_logo.png" alt="Logo Gift Box" width="48" class="rounded-circle me-2">
+                <div>
+                    <p class="fw-bold mb-0">GIFT BOX</p>
+                    <p class="small text-gold mb-0">cestas criativas</p>
+                </div>
+            </a>
+
+            @* flex-fill preenche o formato maximo da div, margin-x = 4 e display-none oculta o form e d-md-block desoculta o display > 765px *@
+            @* a busca abre a página Todas as cestas. method="get" coloca o texto no endereço: ?busca=vinho *@
+            @* value mostra de novo o que foi digitado *@
+            <form asp-controller="Home" asp-action="TotalProduto" method="get" class="flex-fill mx-4 d-none d-md-block">
+                <div class="input-group">
+                    @* serve para embutir um input com um botao*@
+                    <input type="search" name="busca" value="@Context.Request.Query["busca"]" class="form-control" placeholder="Buscar cestas, ex.: Natal, vinho, urso">
+                    @* btn border: só a borda, sem o fundo cinza do btn-outline-secondary (igual ao botão de mostrar senha) *@
+                    <button type="submit" class="btn border" aria-label="Buscar">
+                        @* aria-label: para cego ouvir o botao *@
+                        <span class="bi bi-search"></span> @*icone de pesquisa *@
+                    </button>
+                </div>
+            </form>
+
+            @* ícones: ms-auto empurra para a direita | gap-3 separa os dois *@
+            <div class="ms-auto d-flex align-items-center gap-3">
+
+                @* lupa só no celular (d-md-none): ao clicar, abre a busca que está logo abaixo (collapse) *@
+                <a href="#abrirBusca" class="link-dark d-md-none" data-bs-toggle="collapse" aria-label="Buscar">
+                    <span class="bi bi-search fs-4 d-block lh-1"></span>
+                </a>
+
+                @if (logado)
+                {
+                    <div class="dropdown">
+                        @* ícone + "Olá, Nome" + setinha: a pessoa vê que está logada sem abrir o menu *@
+                        <a href="#" class="link-dark text-decoration-none d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Conta de @primeiroNome">
+                            <span class="bi bi-person icone-pessoa d-block lh-1"></span>
+                            @* lh-1 + gap-1: as 2 linhas ficam da altura do ícone (antes ficavam mais altas e pareciam tortas) *@
+                            <span class="small lh-1 d-flex flex-column gap-1">
+                                <span class="text-secondary">Olá,</span>
+                                <span class="fw-semibold">@primeiroNome</span>
+                            </span>
+                            <span class="bi bi-chevron-down small text-secondary"></span>
+                        </a>
+                        @* menu sem borda, sombra e cantos arredondados; só o Sair (o site não tem "Minha conta") *@
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow rounded-3 p-2 mt-2">
+                            <li>
+                                @* Sair é um formulário POST: o Sair do controller é [HttpPost] e confere o token *@
+                                <form asp-controller="Conta" asp-action="Sair" method="post">
+                                    <button type="submit" class="dropdown-item rounded-2 d-flex align-items-center gap-2 py-2">
+                                        <span class="bi bi-box-arrow-right text-secondary"></span> Sair
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <a asp-controller="Conta" asp-action="Login" class="link-dark" aria-label="Entrar">
+                        <span class="bi bi-person icone-pessoa d-block lh-1"></span> @* icone de pessoa*@
+                    </a>
+                }
+
+                @* parte dificil da bolinha com position-relative (moldura) e position-absolute (posiciona dentro da position-relative) middle (posiciona no centro da div altura e largura divido)*@
+                @{
+                    int quantidadeNaSacola = 0;                                     // começa em 0
+                    string? textoDoCarrinho = Context.Request.Cookies["carrinho"];  // lê o cookie do carrinho
+                    if (!string.IsNullOrEmpty(textoDoCarrinho))                     // tem alguma coisa no carrinho?
+                    {
+                        quantidadeNaSacola = textoDoCarrinho.Split(',').Length;     // cada vírgula separa um produto diferente
+                    }
+                }
+                <a asp-controller="Carrinho" asp-action="Index" class="link-dark position-relative me-2" aria-label="Carrinho">
+
+                    <span class="bi bi-bag icone-sacola d-block lh-1"></span> @* icone da bag *@
+
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-gold">@quantidadeNaSacola</span>
+                    @* começa no top, start 100% ou seja na direita no tod, tanslate-middle coloca no centro em relação a moldura ( position-relation)*@
+                    @*resumo: usa o link (a) como referencia (relative) e coloca a bolinha como (obsolute) dentro da referencia
+                    , ou seja 0 top, 100% left e middle translate (-50, -50 altura metade, largura metade(x,y))*@
+                </a>
+            </div>
+
+        </div>
+
+        @* busca do celular: começa fechada (collapse) e some no computador (d-md-none) *@
+        <div class="collapse d-md-none container pb-3" id="abrirBusca">
+            <form asp-controller="Home" asp-action="TotalProduto" method="get">
+                <div class="input-group">
+                    <input type="search" name="busca" value="@Context.Request.Query["busca"]" class="form-control" placeholder="Buscar cestas, ex.: Natal, vinho, urso">
+                    @* btn border: só a borda, sem fundo (igual à busca do computador) *@
+                    <button type="submit" class="btn border" aria-label="Buscar">
+                        <span class="bi bi-search"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+
+        @* CATEGORIAS DA LOJINHA (NAV)*@
+        @* página atual em negrito (igual à versão HTML): Início quando está na home *@
+
+        @{
+            // estaNaHome = true quando a página aberta é a home (Home/Index)
+            // RouteData.Values = o controller e a action da página aberta. && quer dizer E
+            bool estaNaHome = ViewContext.RouteData.Values["controller"]?.ToString() == "Home"
+                           && ViewContext.RouteData.Values["action"]?.ToString() == "Index";
+            // número da categoria aberta (0 = nenhuma). Vem do HomeController (ViewBag.Id)
+            // começa em 0: nenhuma categoria aberta
+            int categoriaAtual = 0;
+            // o controller mandou um número? (só a página de categoria manda)
+            if (ViewBag.Id != null)
+            {
+                // guarda o número. O (int) avisa que é número inteiro
+                categoriaAtual = (int)ViewBag.Id;
+            }
+
+            // estilo (cor e negrito) do link "Início"
+            // cria a variável de texto, ainda sem valor
+            string estiloLinkInicio;
+            // está na home?
+            if (estaNaHome)
+            {
+                // sim: preto e negrito
+                estiloLinkInicio = "link-dark fw-bold";
+            }
+            else
+            {
+                // não: cinza
+                estiloLinkInicio = "link-secondary";
+            }
+
+            // estilo do link "Todas as cestas": negrito quando a página aberta é a Todas
+            // cria a variável de texto, ainda sem valor
+            string estiloLinkTotalProduto;
+            if (ViewContext.RouteData.Values["action"]?.ToString() == "TotalProduto")
+            {
+                // sim: preto e negrito
+                estiloLinkTotalProduto = "link-dark fw-bold";
+            }
+            else
+            {
+                // não: cinza
+                estiloLinkTotalProduto = "link-secondary";
+            }
+
+            // estilo de cada link de categoria: recebe o número do link (1 a 6)
+            string EstiloLinkCategoria(int numero)
+            {
+                // a categoria aberta é a deste link?
+                if (categoriaAtual == numero)
+                {
+                    // sim: preto e negrito
+                    return "link-dark fw-bold";
+                }
+                else
+                {
+                    // não: cinza
+                    return "link-secondary";
+                }
+            }
+        }
+        @* estilo do "Ocasiões": negrito quando alguma categoria está aberta *@
+        @{
+            string estiloLinkOcasioes;
+            if (categoriaAtual > 0)
+            {
+                estiloLinkOcasioes = "link-dark fw-bold";
+            }
+            else
+            {
+                estiloLinkOcasioes = "link-secondary";
+            }
+        }
+        <nav class="container small py-3" aria-label="Categorias">
+
+            @* COMPUTADOR (d-none d-md-flex): todos os links em linha. Some no celular *@
+            <ul class="nav gap-4 d-none d-md-flex">
+                <li class="nav-item">
+                    <a asp-controller="Home" asp-action="Index" class="nav-link ps-0 pe-2 @estiloLinkInicio">Início</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="Home" asp-action="TotalProduto" class="nav-link ps-0 pe-2 @estiloLinkTotalProduto">Todas as cestas</a>
+                </li>
+                @* asp-route-id="1" coloca o /1 no fim do link: /Home/Categoria/1 *@
+                <li class="nav-item"><a asp-controller="Home" asp-action="Categoria" asp-route-id="1" class="nav-link ps-0 pe-2 @EstiloLinkCategoria(1)">Natal</a></li>
+                <li class="nav-item"><a asp-controller="Home" asp-action="Categoria" asp-route-id="2" class="nav-link ps-0 pe-2 @EstiloLinkCategoria(2)">Namorados</a></li>
+                <li class="nav-item"><a asp-controller="Home" asp-action="Categoria" asp-route-id="3" class="nav-link ps-0 pe-2 @EstiloLinkCategoria(3)">Dia dos Pais</a></li>
+                <li class="nav-item"><a asp-controller="Home" asp-action="Categoria" asp-route-id="4" class="nav-link ps-0 pe-2 @EstiloLinkCategoria(4)">Dia das Mães</a></li>
+                <li class="nav-item"><a asp-controller="Home" asp-action="Categoria" asp-route-id="5" class="nav-link ps-0 pe-2 @EstiloLinkCategoria(5)">Aniversário</a></li>
+                <li class="nav-item"><a asp-controller="Home" asp-action="Categoria" asp-route-id="6" class="nav-link ps-0 pe-2 @EstiloLinkCategoria(6)">Vinhos</a></li>
+            </ul>
+
+            @* CELULAR (d-md-none): só Início, Todas as cestas e Ocasiões. Some no computador *@
+            <ul class="nav gap-4 d-md-none">
+                <li class="nav-item">
+                    <a asp-controller="Home" asp-action="Index" class="nav-link ps-0 pe-2 @estiloLinkInicio">Início</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="Home" asp-action="TotalProduto" class="nav-link ps-0 pe-2 @estiloLinkTotalProduto">Todas as cestas</a>
+                </li>
+                @* dropdown do Bootstrap: o link abre uma lista com as categorias (sem JavaScript seu) *@
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link ps-0 pe-2 dropdown-toggle @estiloLinkOcasioes" data-bs-toggle="dropdown" aria-expanded="false">Ocasiões</a>
+                    <ul class="dropdown-menu border-0 shadow rounded-3 p-2">
+                        @* asp-route-id="1" coloca o /1 no fim do link: /Home/Categoria/1 *@
+                        <li><a asp-controller="Home" asp-action="Categoria" asp-route-id="1" class="dropdown-item rounded-2">Natal</a></li>
+                        <li><a asp-controller="Home" asp-action="Categoria" asp-route-id="2" class="dropdown-item rounded-2">Namorados</a></li>
+                        <li><a asp-controller="Home" asp-action="Categoria" asp-route-id="3" class="dropdown-item rounded-2">Dia dos Pais</a></li>
+                        <li><a asp-controller="Home" asp-action="Categoria" asp-route-id="4" class="dropdown-item rounded-2">Dia das Mães</a></li>
+                        <li><a asp-controller="Home" asp-action="Categoria" asp-route-id="5" class="dropdown-item rounded-2">Aniversário</a></li>
+                        <li><a asp-controller="Home" asp-action="Categoria" asp-route-id="6" class="dropdown-item rounded-2">Vinhos</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        @* fim da header *@
+    </header>
+
+
+<main role="main"> @* informar acessibilidade que essa parte é a main *@
+        @RenderBody()
+</main>
+  
+
+@* precisa de rodape ? se for null precisa, se for true ele nao precisa *@
+
+    @if (ViewData ["NoFooter"] == null) 
+        {
+            @* footer  *@
+        <footer class="bg-dark text-white">
+            <div class="container py-5">
+
+                @* 4 colunas *@
+                <div class="row g-4 small">
+
+                    @* coluna 1: marca *@
+                    <div class="col-12 col-md-3">
+                        @* system grid md-4  4/12 *@
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="~/imgs/gift_box_logo.png" width="40" class="rounded-circle me-2" alt="Logo Gift Box">
+                            <span class="fw-bold fs-6">GIFT BOX</span>
+                        </div>
+
+                        <p class="text-white-50">Cestas criativas. Catanduva - SP.</p>
+
+                        @*icones abaixo do logo dentro de um col-md-3 *@
+                        <div class="d-flex gap-3 fs-5">
+                            <a href="https://instagram.com/giftboxcestascriativas" class="link-light"
+                               aria-label="Instagram"><span class="bi bi-instagram"></span></a>
+                            <a href="https://wa.me/5516982373442" class="link-light" aria-label="WhatsApp">
+                                <span class="bi bi-whatsapp"></span> @* icon wtts*@
+                            </a>
+                        </div>
+
+                    </div>
+
+                    @* coluna 2: loja *@
+                    @* system grid md(3) - serve para separar a logo do resto *@
+                    <div class="col-6 col-md-3">
+                        <p class="fw-semibold mb-2">Loja</p>
+                        @* ID CATALOGO *@  
+                        <p class="mb-1">
+
+                            <a asp-controller="Home" asp-action="Index" asp-fragment="catalogo"
+                               class="link-light link-opacity-50 text-decoration-none">Catálogo</a>  
+                           </p>
+
+                        <p class="mb-1">
+                            <a asp-controller="Home" asp-action="Index" asp-fragment="novidade"
+                               class="link-light link-opacity-50 text-decoration-none">Novidades</a>
+                        </p>
+
+                    </div>
+
+                    @* coluna 3: ocasiões *@
+                    <div class="col-6 col-md-3">
+                        @* system-grid (3) *@
+                        <p class="fw-semibold mb-2">Ocasiões</p>
+                        <p class="mb-1">
+                            <a asp-controller="Home" asp-action="Categoria" asp-route-id="1"
+                               class="link-light link-opacity-50 text-decoration-none">Natal</a>
+                        </p>
+
+                        <p class="mb-1">
+                            <a asp-controller="Home" asp-action="Categoria" asp-route-id="2" 
+                               class="link-light link-opacity-50 text-decoration-none">Namorados</a> 
+                        </p>
+
+                        <p class="mb-1">
+                            <a asp-controller="Home" asp-action="Categoria" asp-route-id="3"
+                               class="link-light link-opacity-50 text-decoration-none">Dia dos Pais</a>
+                        </p>
+                        <p class="mb-1">
+                            <a asp-controller="Home" asp-action="Categoria" asp-route-id="4"
+                               class="link-light link-opacity-50 text-decoration-none">Dia das Mães</a>
+                        </p>
+                        <p class="mb-1">
+                            <a asp-controller="Home" asp-action="Categoria" asp-route-id="5"
+                               class="link-light link-opacity-50 text-decoration-none">Aniversário</a>
+                        </p>
+                        <p class="mb-0">
+                            <a asp-controller="Home" asp-action="Categoria" asp-route-id="6"
+                               class="link-light link-opacity-50 text-decoration-none">Vinhos</a>
+                        </p>
+
+                    </div>
+
+                    @* coluna 4: atendimento *@
+                    <div class="col-12 col-md-3">
+                        @* system-grid (3) *@
+                        <p class="fw-semibold mb-2">Atendimento</p>
+                        <p class="text-white-50 mb-1"><span class="bi bi-whatsapp me-2"></span>(16) 98237-3442</p>
+                        <p class="text-white-50 mb-1"><span class="bi bi-instagram me-2"></span>@@giftboxcestascriativas</p>
+                        <p class="text-white-50 mb-0"><span class="bi bi-truck me-2"></span>Entrega no mesmo dia até 14h</p>
+                    </div>
+                </div>
+
+
+                @* final do footer   *@
+                <div class="d-flex justify-content-between border-top border-secondary pt-3 mt-4 small">
+                    <span>© 2026 Gift Box</span>
+                    <span>Projeto Inter 4 · Fatec Catanduva</span>
+                </div>
+
+            </div>
+        </footer>
+
+        @* botão do WhatsApp: position-fixed prende na janela (fica parado quando rola) | bottom-0 end-0 = canto de baixo, à direita | m-4 = afastado da borda | shadow = sombra | d-flex + align/justify-center = ícone no meio do círculo *@
+        <a href="https://wa.me/5516982373442" class="btn btn-success rounded-circle position-fixed bottom-0 end-0 m-4 shadow d-flex align-items-center justify-content-center botao-whatsapp" aria-label="Falar no WhatsApp">
+            <span class="bi bi-whatsapp fs-3"></span>
+        </a>
+
+        }
+        
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

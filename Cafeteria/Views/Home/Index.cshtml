@@ -1,0 +1,344 @@
+﻿@{
+    ViewData["Title"] = "Catalogo";
+}
+@* BANNER *@
+
+@*seção banner | banner | carrossel *@
+<section class="container text-center mt-5 mb-5">
+
+    @* TEXTO *@ @* display-5 tamanho do text*@
+    <h1 class="display-5 fw-bold">Presentes que dizem <span class="fonte-fraunces fst-italic text-gold">o que você sente</span></h1>
+    <p class="fs-5 text-secondary">Cestas montadas à mão, com cartão personalizado.</p>
+
+    @* BOTÕES *@
+    <div class="d-flex justify-content-center align-items-center gap-4 mt-4">
+        @* separação de 4 (gap) margin top (4) d-flex, alinha tudo ao centro*@
+        <a href="#catalogo" class="btn btn-dark rounded-pill px-4">Ver cestas</a>
+        <a asp-controller="Home" asp-action="TotalProduto" class="link-dark text-decoration-none">Ver catálogo → </a>
+        @* &rsqaquo serve para representar > *@
+    </div>
+
+    @* CARROSSEL (passa sozinho; setas e bolinhas embaixo da foto) *@
+    <div id="bannerCarousel" class="carousel slide mt-4" data-bs-ride="carousel" data-bs-interval="4000"
+        data-bs-pause="false">
+        @* data-bs-ride serve para controla o compartamento de carrosel*@
+
+        @* FOTOS do carrosel *@
+        <div class="carousel-inner rounded-4">
+            @* imagem 1 *@
+            <div class="carousel-item active">
+                <div class="ratio ratio-21x9">
+                    <img src="~/imgs/banners/banner_cartao.jpg"
+                        class="d-block w-100 object-fit-cover" alt="Gift Box Cestas Criativas, Itápolis SP">
+                </div>
+            </div>
+            @* imagem 2 *@
+            <div class="carousel-item">
+                <div class="ratio ratio-21x9">
+                    <img src="~/imgs/banners/banner_natal_novo.jpg"
+                        class="d-block w-100 object-fit-cover" alt="Natal Gift Box: cestas de Natal">
+                </div>
+            </div>
+
+            @* imagem 3 *@
+            <div class="carousel-item">
+                <div class="ratio ratio-21x9">
+                    <img src="~/imgs/banners/banner_loja.jpg"
+                        class="d-block w-100 object-fit-cover" alt="Feita com carinho, do seu jeito. Escolha a sua, personalize e solicite o pedido">
+                </div>
+            </div>
+
+        </div>
+
+        @* SETAS + BOLINHAS (embaixo da foto, lado a lado) *@
+
+        @* seta esquerda*@
+        <div class="d-flex justify-content-center align-items-center gap-3 mt-3">
+            <button class="btn btn-light btn-sm rounded-circle" type="button" data-bs-target="#bannerCarousel"
+                data-bs-slide="prev" aria-label="Anterior">
+                <span class="bi bi-chevron-left"></span> @* setinha embaixo *@
+            </button>
+
+            @* bolinhas*@
+            <div class="carousel-indicators position-static m-0">
+                <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="0" class="active bg-dark"
+                    aria-label="Foto 1"></button>
+                <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="1" class="bg-dark"
+                    aria-label="Foto 2"></button>
+                <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="2" class="bg-dark"
+                    aria-label="Foto 3"></button>
+            </div>
+            @* seta direita *@
+            <button class="btn btn-light btn-sm rounded-circle" type="button" data-bs-target="#bannerCarousel"
+                data-bs-slide="next" aria-label="Próxima">
+                <span class="bi bi-chevron-right"></span>
+            </button>
+        </div>
+
+    </div>
+</section>
+
+@* CATEGORIAS: 3 por linha no celular (col-4), 6 no computador (col-md-2) *@
+<div class="container mt-4 mb-5 pb-3">
+    <div class="row text-center g-3">
+        <div class="col-4 col-md-2">
+
+            @* imagem 1 *@
+            @* o link envolve a foto e o nome: os dois levam para a categoria *@
+            <a asp-controller="Home" asp-action="Categoria" asp-route-id="1" class="d-block link-dark link-underline link-underline-opacity-0 link-underline-opacity-100-hover link-offset-2">
+                <div class="ratio ratio-1x1 w-50 mx-auto">
+                    <img src="~/imgs/categorias/natal.png" alt="Natal" class="rounded-circle object-fit-cover border border-2 border-gold">
+                </div>
+                <p class="small mt-2 mb-0">Natal</p>
+            </a>
+        </div>
+
+        @* imagem 2 *@
+        <div class="col-4 col-md-2">
+            <a asp-controller="Home" asp-action="Categoria" asp-route-id="2" class="d-block link-dark link-underline link-underline-opacity-0 link-underline-opacity-100-hover link-offset-2">
+                <div class="ratio ratio-1x1 w-50 mx-auto">
+                    <img src="~/imgs/categorias/namorados.png" alt="Namorados" class="rounded-circle object-fit-cover border border-2 border-gold">
+                </div>
+                <p class="small mt-2 mb-0">Namorados</p>
+            </a>
+        </div>
+
+        @* imagem 3 *@
+        <div class="col-4 col-md-2">
+            <a asp-controller="Home" asp-action="Categoria" asp-route-id="3" class="d-block link-dark link-underline link-underline-opacity-0 link-underline-opacity-100-hover link-offset-2">
+                <div class="ratio ratio-1x1 w-50 mx-auto">
+                    <img src="~/imgs/categorias/pais.png" alt="Dia dos Pais" class="rounded-circle object-fit-cover border border-2 border-gold">
+                </div>
+                <p class="small mt-2 mb-0">Dia dos Pais</p>
+            </a>
+        </div>
+
+        @* imagem 3 *@
+        <div class="col-4 col-md-2">
+            <a asp-controller="Home" asp-action="Categoria" asp-route-id="4" class="d-block link-dark link-underline link-underline-opacity-0 link-underline-opacity-100-hover link-offset-2">
+                <div class="ratio ratio-1x1 w-50 mx-auto">
+                    <img src="~/imgs/categorias/maes.png" alt="Dia das Mães" class="rounded-circle object-fit-cover border border-2 border-gold">
+                </div>
+                <p class="small mt-2 mb-0">Dia das Mães</p>
+            </a>
+        </div>
+
+        @* imagem 5 *@
+        <div class="col-4 col-md-2">
+            <a asp-controller="Home" asp-action="Categoria" asp-route-id="5" class="d-block link-dark link-underline link-underline-opacity-0 link-underline-opacity-100-hover link-offset-2">
+                <div class="ratio ratio-1x1 w-50 mx-auto">
+                    <img src="~/imgs/categorias/aniversario.png" alt="Aniversário" class="rounded-circle object-fit-cover border border-2 border-gold">
+                </div>
+                <p class="small mt-2 mb-0">Aniversário</p>
+            </a>
+        </div>
+
+
+        @* imagem 6 *@
+        <div class="col-4 col-md-2">
+            <a asp-controller="Home" asp-action="Categoria" asp-route-id="6" class="d-block link-dark link-underline link-underline-opacity-0 link-underline-opacity-100-hover link-offset-2">
+                <div class="ratio ratio-1x1 w-50 mx-auto">
+                    <img src="~/imgs/categorias/vinhos.png" alt="Vinhos" class="rounded-circle object-fit-cover border border-2 border-gold">
+                </div>
+                <p class="small mt-2 mb-0">Vinhos</p>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+@* isso aqui é as novidades *@
+<section class="bg-creme py-5" id="novidade">
+    <div class="container">
+
+        @* título + setas *@
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            @* titulo + risco juntos numa div: assim o risco fica embaixo e nao vira mais um item do d-flex *@
+            <div>
+                <h2 class="fs-4 fw-bold mb-2">Novidades</h2>
+                <div class="risco"></div>
+            </div>
+
+            <div class="d-flex gap-2">
+                @* seta esquerda *@
+                <button class="btn btn-light btn-sm rounded-circle" type="button"
+                    data-bs-target="#novidadesCarousel" data-bs-slide="prev" aria-label="Anterior">
+                    <span class="bi bi-chevron-left"></span>
+                </button>
+                @* seta direita *@
+                <button class="btn btn-light btn-sm rounded-circle" type="button"
+                    data-bs-target="#novidadesCarousel" data-bs-slide="next" aria-label="Próxima">
+                    <span class="bi bi-chevron-right"></span>
+                </button>
+            </div>
+        </div>
+
+        @* CARROSSEL *@
+        <div id="novidadesCarousel" class="carousel slide">
+            <div class="carousel-inner">
+
+                @* as cestas vêm do HomeController (ViewBag.Novidades) *@
+                @{
+                    // pega a lista que o controller mandou. (List<Business.Produto>) avisa que é uma lista de cestas
+                    var novidades = (List<Business.Produto>)ViewBag.Novidades;
+                }
+
+                @* PÁGINA 1: as 4 primeiras cestas (Take(4) = pega as 4 primeiras) *@
+                <div class="carousel-item active">
+                    <div class="row g-3">
+                        @* repete o card para cada uma das 4 primeiras cestas *@
+                        @foreach (var cesta in novidades.Take(4))
+                        {
+                            @* coluna do card: 2 por linha no celular, 4 no computador *@
+                            <div class="col-6 col-lg-3">
+                                @* o card inteiro é um link para a página dessa cesta *@
+                                <a asp-controller="Home" asp-action="Produto" asp-route-id="@cesta.id"
+                                    class="d-flex flex-column h-100 bg-white rounded-4 overflow-hidden text-decoration-none link-dark">
+                                    <div class="p-3">
+                                        <p class="small fw-semibold text-uppercase text-gold mb-1">Novo</p>
+                                        @* nome da cesta *@
+                                        <p class="fw-semibold card-novidade mb-0">@cesta.nome</p>
+                                        @* preço em reais. "C" = moeda; pt-BR = formato brasileiro *@
+                                        <p class="fs-5 fw-bold text-gold mb-0">@cesta.preco.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</p>
+                                    </div>
+                                    <div class="ratio ratio-1x1 mt-auto">
+                                        @* foto da cesta. Url.Content monta o caminho *@
+                                        <img src="@Url.Content(cesta.imagem ?? "~/imgs/produtos/produto.jpg")" alt="@cesta.nome"
+                                            class="object-fit-contain p-3">
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                @* PÁGINA 2: as outras cestas (Skip(4) = pula as 4 primeiras) *@
+                <div class="carousel-item">
+                    <div class="row g-3">
+                        @* igual à página 1: só muda o Skip(4), que pega as cestas restantes *@
+                        @foreach (var cesta in novidades.Skip(4))
+                        {
+                            <div class="col-6 col-lg-3">
+                                <a asp-controller="Home" asp-action="Produto" asp-route-id="@cesta.id"
+                                    class="d-flex flex-column h-100 bg-white rounded-4 overflow-hidden text-decoration-none link-dark">
+                                    <div class="p-3">
+                                        <p class="small fw-semibold text-uppercase text-gold mb-1">Novo</p>
+                                        <p class="fw-semibold card-novidade mb-0">@cesta.nome</p>
+                                        <p class="fs-5 fw-bold text-gold mb-0">@cesta.preco.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</p>
+                                    </div>
+                                    <div class="ratio ratio-1x1 mt-auto">
+                                        <img src="@Url.Content(cesta.imagem ?? "~/imgs/produtos/produto.jpg")" alt="@cesta.nome"
+                                            class="object-fit-contain p-3">
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@* vantagens: abaixo das Novidades *@
+@* mt-5 pt-4 = espaço em cima (a seção sobe um pouco, mais perto das Novidades) | mb-5 pb-5 = espaço embaixo, antes do catálogo *@
+<section class="container mt-5 pt-4 mb-5 pb-5">
+    @* título da seção, igual ao de Novidades e Nosso catálogo: h2 + risquinho dourado | mb-5 = espaço antes dos ícones *@
+    <div class="mb-5">
+        <h2 class="fs-4 fw-bold mb-2">A diferença Gift Box</h2>
+        <div class="risco"></div>
+    </div>
+
+    <div class="row text-center g-4">
+
+        @* entrega *@
+        <div class="col-6 col-md-3">
+            @* bolinha creme: d-inline-flex + p-3 + rounded-circle (a caixa se ajusta ao ícone e fica redonda) *@
+            <span class="d-inline-flex lh-1 p-4 rounded-circle bg-creme mb-3">
+                <span class="bi bi-truck fs-1 text-gold"></span>
+            </span>
+            <p class="fw-semibold mb-1">Entrega rápida</p>
+            <p class="small text-secondary mb-0">nas cidades selecionadas</p>
+        </div>
+
+        @* cartão *@
+        <div class="col-6 col-md-3">
+            <span class="d-inline-flex lh-1 p-4 rounded-circle bg-creme mb-3">
+                <span class="bi bi-envelope-heart fs-1 text-gold"></span>
+            </span>
+            <p class="fw-semibold mb-1">Cartão personalizado</p>
+            <p class="small text-secondary mb-0">com a sua mensagem</p>
+        </div>
+
+        @* gift *@
+        <div class="col-6 col-md-3">
+            <span class="d-inline-flex lh-1 p-4 rounded-circle bg-creme mb-3">
+                <span class="bi bi-gift fs-1 text-gold"></span>
+            </span>
+            <p class="fw-semibold mb-1">Montada à mão</p>
+            <p class="small text-secondary mb-0">uma por uma</p>
+        </div>
+
+        @* whatsapp *@
+        <div class="col-6 col-md-3">
+            <span class="d-inline-flex lh-1 p-4 rounded-circle bg-creme mb-3">
+                <span class="bi bi-whatsapp fs-1 text-gold"></span>
+            </span>
+            <p class="fw-semibold mb-1">Pedido pelo WhatsApp</p>
+            <p class="small text-secondary mb-0">(16) 98237-3442</p>
+        </div>
+
+    </div>
+</section>
+
+@* NOSSO CATÁLOGO: mesma grade dos destaques | g-4 = espaço maior entre os cards *@
+<section class="container my-5" id="catalogo"> @* ID IMPORTANTE *@
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fs-4 fw-bold mb-2">Nosso catálogo</h2>
+            <div class="risco"></div>
+        </div>
+        <a asp-controller="Home" asp-action="TotalProduto" class="link-secondary text-decoration-none small">Ver todos →</a>
+    </div>
+
+    @* catalogo o mesmo do de cima *@
+    @* as cestas vêm do HomeController (ViewBag.Catalogo); o foreach repete o card para cada uma *@
+    <div class="row g-4">
+        @* repete o card para cada cesta do "Nosso catálogo" *@
+        @foreach (var cesta in (List<Business.Produto>)ViewBag.Catalogo)
+        {
+            <div class="col-6 col-md-4 col-lg-3 d-flex flex-column">
+                <div class="ratio ratio-1x1">
+                    @* foto da cesta, inteira (object-fit-contain) *@
+                    <img src="@Url.Content(cesta.imagem ?? "~/imgs/produtos/produto.jpg")" alt="@cesta.nome" class="object-fit-contain rounded-4 p-3">
+                </div>
+                <p class="mt-2 mb-0 card-novidade">@cesta.nome</p>
+                <p class="fs-5 fw-bold text-gold mb-2">@cesta.preco.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</p>
+                @* botão que abre a página dessa cesta *@
+                <a asp-controller="Home" asp-action="Produto" asp-route-id="@cesta.id" class="btn btn-dark w-100 mt-auto">Solicitar pedido</a>
+            </div>
+        }
+    </div>
+</section>
+
+@* banner "Gostou da nossa loja?" (o formulário ainda não envia nada) *@
+@* banner-email (client.css) = foto da cesta no fundo com uma camada escura por cima | text-center = tudo no meio | text-white = letras brancas | py-5 = espaço dentro | mb-5 = afasta do rodapé *@
+<section class="banner-email text-center text-white py-5 mb-5">
+    <div class="container py-4">
+        <h2 class="display-5 fw-bold mb-2">Gostou da nossa <span class="fonte-fraunces fst-italic text-gold">loja?</span></h2>
+        <p class="fs-5 text-white text-opacity-75 mb-4">Cadastre-se e receba novidades e promoções no seu e-mail.</p>
+
+        @* row + justify-content-center + col-lg-6 = formulário no meio, com metade da largura no computador *@
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <form class="d-flex gap-2">
+                    <input type="email" class="form-control" placeholder="Digite o seu e-mail" aria-label="Seu e-mail">
+                    <button type="button" class="btn btn-light px-4">Enviar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

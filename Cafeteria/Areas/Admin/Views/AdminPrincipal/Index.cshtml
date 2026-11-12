@@ -1,0 +1,47 @@
+@{
+    ViewData["Title"] = "Início";
+}
+
+@* tela de início do Yago, no seu estilo: um cartão branco por área do gestor *@
+<div class="container py-5">
+
+    <h1 class="fs-2 fw-bold mb-1">Olá, @User.Identity?.Name</h1>
+    <p class="text-secondary mb-4">Selecione uma opção para gerenciar a Gift Box.</p>
+
+    <div class="row g-4">
+        <div class="col-12 col-md-4">
+            <a asp-area="Admin" asp-controller="AdminPedidos" asp-action="Index" class="d-block bg-white border rounded-4 p-4 h-100 text-decoration-none link-dark">
+                <h2 class="fs-5 fw-bold mb-1">Pedidos</h2>
+                <p class="text-secondary mb-0">Consultar pedidos recebidos</p>
+            </a>
+        </div>
+        <div class="col-12 col-md-4">
+            <a asp-area="Admin" asp-controller="AdminProdutos" asp-action="Index" class="d-block bg-white border rounded-4 p-4 h-100 text-decoration-none link-dark">
+                <h2 class="fs-5 fw-bold mb-1">Produtos</h2>
+                <p class="text-secondary mb-0">Consultar o catálogo</p>
+            </a>
+        </div>
+        <div class="col-12 col-md-4">
+            <a asp-area="Admin" asp-controller="AdminClientes" asp-action="Index" class="d-block bg-white border rounded-4 p-4 h-100 text-decoration-none link-dark">
+                <h2 class="fs-5 fw-bold mb-1">Clientes</h2>
+                <p class="text-secondary mb-0">Consultar clientes cadastrados</p>
+            </a>
+        </div>
+        @if (User.IsInRole("Administrador"))
+        {
+            <div class="col-12 col-md-4">
+                <a asp-area="Admin" asp-controller="AdminUsuarios" asp-action="Index" class="d-block bg-white border rounded-4 p-4 h-100 text-decoration-none link-dark">
+                    <h2 class="fs-5 fw-bold mb-1">Usuários</h2>
+                    <p class="text-secondary mb-0">Consultar e cadastrar a equipe</p>
+                </a>
+            </div>
+            <div class="col-12 col-md-4">
+                <a asp-area="Admin" asp-controller="AdminCidadesEntrega" asp-action="Index" class="d-block bg-white border rounded-4 p-4 h-100 text-decoration-none link-dark">
+                    <h2 class="fs-5 fw-bold mb-1">Cidades de entrega</h2>
+                    <p class="text-secondary mb-0">Configurar atendimento e taxas</p>
+                </a>
+            </div>
+        }
+    </div>
+
+</div>

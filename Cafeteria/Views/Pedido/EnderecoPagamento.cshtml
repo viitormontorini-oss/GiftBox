@@ -1,0 +1,223 @@
+@* ETAPA 2. O PedidoController manda o pedido (Model), as cestas, as cidades e os valores (ViewBag) *@
+@model Services.Models.PedidoCadastro
+@{
+    ViewData["Title"] = "Entrega e pagamento";
+    ViewData["NoFooter"] = true;
+    // formato brasileiro de dinheiro
+    var brasil = new System.Globalization.CultureInfo("pt-BR");
+    // cestas do carrinho
+    var cestas = (List<Business.Produto>)ViewBag.Cestas;
+    // quantidade de cada cesta: id -> quantidade
+    var quantidades = (Dictionary<int, int>)ViewBag.Quantidades;
+}
+
+        <div class="container py-4">
+
+            @* o formulário envolve as duas colunas porque o botão Continuar fica no resumo *@
+            <form asp-controller="Pedido" asp-action="EnderecoPagamento" method="post">
+            <div class="row g-4">
+
+                @* texto de finalizar compra*@
+                <div class="col-12 col-md-8">
+
+                    @*etapas*@
+
+                     @* bagde são as etiquetas e so tem link no 1 para ficar adequado a jornada correta do cliente*@
+                    <div class="d-flex justify-content-between pb-3 mb-4">
+                        <div class="text-center flex-fill">
+                            <a asp-controller="Pedido" asp-action="Personalizar"
+                                class="badge rounded-pill bg-secondary text-decoration-none">1
+                            </a>
+                            <p class="small mb-0 mt-1">
+                                <a asp-controller="Pedido" asp-action="Personalizar"
+                                    class="link-secondary text-decoration-none">Personalizar
+                                </a>
+                             </p>
+                        </div>
+
+                        <div class="text-center flex-fill">
+                            <span class="badge rounded-pill bg-dark">2</span>
+                            <p class="small fw-semibold mb-0 mt-1">Entrega e pagamento</p>
+                        </div>
+
+                        <div class="text-center flex-fill">
+                            <span class="badge rounded-pill border text-secondary">3</span>
+                            <p class="small text-secondary mb-0 mt-1">Revisar</p>
+                        </div>
+                    </div>
+
+                    @*entrega e pagamento *@
+                    <h1 class="fs-3 fw-bold">Entrega e pagamento</h1>
+                    <p class="text-secondary">Escolha como quer receber.</p>
+
+                    @* erros do PedidoServices (ex.: "Informe o celular") *@
+                    <div asp-validation-summary="All" class="text-danger small"></div>
+
+                    @* como quer receber *@
+                    <h2 class="fs-6 fw-bold mt-4">Como quer receber?</h2>
+                    <div class="row g-2">
+
+                        @* retirada *@
+                        <div class="col-6">
+                            @* col 6 para cartao ficar lado a lado e d-block para ocuparem uma nova linha embaixo do retirar na loja e gratis *@
+                            <label class="border rounded p-3 d-block h-100">
+                                @* checked: marca a opção guardada. onchange: única linha de JavaScript, envia o formulário ao trocar de opção *@
+                                <input class="form-check-input me-2" type="radio" name="FormaRecebimento" value="Retirada" checked="@(Model.FormaRecebimento == "Retirada")" onchange="this.form.submit()">
+                                Retirar na loja
+                                <span class="d-block small text-secondary">Grátis</span>
+                            </label>
+                        </div>
+
+                        @* entrega *@
+                        <div class="col-6">
+                            <label class="border rounded p-3 d-block h-100">
+                                <input class="form-check-input me-2" type="radio" name="FormaRecebimento" value="Entrega" checked="@(Model.FormaRecebimento == "Entrega")" onchange="this.form.submit()">
+                                Entregar no endereço
+                                <span class="d-block small text-secondary">Frete pela cidade</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    @* cidade só aparece para quem escolheu entrega *@
+                    @if (Model.FormaRecebimento == "Entrega")
+                    {
+                        <h2 class="fs-6 fw-bold mt-4">Cidade da entrega</h2>
+                        <div class="row g-2">
+                            @* repete para cada cidade do banco: cidade nova do gestor aparece aqui sozinha *@
+                            @foreach (var cidade in (List<Business.CidadeEntrega>)ViewBag.Cidades)
+                            {
+                                <div class="col-6 col-lg-3">
+                                    <label class="border rounded p-3 d-block h-100">
+                                        @* ao trocar a cidade, a página recarrega e o frete é recalculado *@
+                                        <input class="form-check-input me-2" type="radio" name="CidadeEntregaId" value="@cidade.id" checked="@(Model.CidadeEntregaId == cidade.id)" onchange="this.form.submit()">
+                                        @cidade.nome
+                                        @* frete fixo da cidade, em reais *@
+                                        <span class="d-block small text-secondary">@cidade.taxa.ToString("C", brasil)</span>
+                                    </label>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="form-text">Sua cidade não está na lista? Escolha "Retirar na loja".</div>
+                    }
+
+                    @* quem vai receber *@
+                    <h2 class="fs-6 fw-bold mt-4">Quem vai receber</h2>
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            @* asp-for liga o campo ao NomeRecebe e já traz o que foi guardado *@
+                            <label asp-for="NomeRecebe" class="form-label small fw-semibold">Nome</label>
+                            <input asp-for="NomeRecebe" type="text" class="form-control" maxlength="60" placeholder="Renan Rodrigues">
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label asp-for="Celular" class="form-label small fw-semibold">Celular</label>
+                            <input asp-for="Celular" type="tel" class="form-control" maxlength="20" placeholder="(66) 66666-6666">
+                        </div>
+
+                    </div>
+
+                    @* endereço só aparece para quem escolheu entrega *@
+                    @if (Model.FormaRecebimento == "Entrega")
+                    {
+                        <h2 class="fs-6 fw-bold mt-4">Endereço de entrega</h2>
+                        <div class="row g-2">
+
+                            @* cep *@
+                            <div class="col-12 col-md-4">
+                                <label asp-for="Endereco.Cep" class="form-label small fw-semibold">CEP</label>
+                                <input asp-for="Endereco.Cep" type="text" inputmode="numeric" class="form-control" placeholder="00000-000">
+                            </div>
+                            @* rua *@
+                            <div class="col-9 col-md-6">
+                                <label asp-for="Endereco.Logradouro" class="form-label small fw-semibold">Rua</label>
+                                <input asp-for="Endereco.Logradouro" type="text" class="form-control" maxlength="150" placeholder="Rua das Flores">
+                            </div>
+                            @* número da casa, em coluna própria no banco *@
+                            <div class="col-3 col-md-2">
+                                <label asp-for="Endereco.Numero" class="form-label small fw-semibold">Nº</label>
+                                <input asp-for="Endereco.Numero" type="text" class="form-control" maxlength="10" placeholder="120">
+                            </div>
+
+                            @* bairro e complemento *@
+                            <div class="col-12 col-md-6">
+                                <label asp-for="Endereco.Bairro" class="form-label small fw-semibold">Bairro</label>
+                                <input asp-for="Endereco.Bairro" type="text" class="form-control" maxlength="100" placeholder="Beverly Hills">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label asp-for="Endereco.Complemento" class="form-label small fw-semibold">Complemento</label>
+                                <input asp-for="Endereco.Complemento" type="text" class="form-control" maxlength="100" placeholder="edificio">
+                            </div>
+                        </div>
+                    }
+
+                    @* forma de pagamento *@
+                    <h2 class="fs-6 fw-bold mt-4">Forma de pagamento</h2>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <label class="border rounded p-3 d-block h-100">
+                                <input class="form-check-input me-2" type="radio" name="TipoPagamento" value="Pix" checked="@(Model.TipoPagamento == "Pix")">
+                                Pix
+                                <span class="d-block small text-secondary">Chave enviada no WhatsApp</span>
+                            </label>
+                        </div>
+                        <div class="col-4">
+                            <label class="border rounded p-3 d-block h-100">
+                                <input class="form-check-input me-2" type="radio" name="TipoPagamento" value="Cartão" checked="@(Model.TipoPagamento == "Cartão")">
+                                Cartão
+                                <span class="d-block small text-secondary">Na entrega ou na retirada</span>
+                            </label>
+                        </div>
+                        <div class="col-4">
+                            <label class="border rounded p-3 d-block h-100">
+                                <input class="form-check-input me-2" type="radio" name="TipoPagamento" value="Dinheiro" checked="@(Model.TipoPagamento == "Dinheiro")">
+                                Dinheiro
+                                <span class="d-block small text-secondary">Avise se precisa de troco</span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+                @* resumo do pedido ao lado *@
+                <div class="col-12 col-md-4">
+                    <div class="bg-creme rounded-4 p-4">
+                        <p class="fw-bold">Resumo do pedido</p>
+
+                        @* repete para cada cesta do carrinho *@
+                        @foreach (var cesta in cestas)
+                        {
+                            <div class="d-flex gap-3 flex-wrap border-bottom pb-3 mb-3">
+                                @* gap usado em d-flex para alterar elementos entre seus filhos*@
+                                <img src="@Url.Content(cesta.imagem ?? "~/imgs/produtos/produto.jpg")" alt="@cesta.nome" width="64" class="rounded-3">
+                                <div>
+                                    <p class="small fw-semibold mb-0">@cesta.nome</p>
+                                    <p class="small text-secondary mb-0">@quantidades[cesta.id] un.</p>
+                                </div>
+                                @* preço x quantidade. text-nowrap impede do R$ ir para baixo *@
+                                <p class="small ms-auto mb-0 text-nowrap">@((cesta.preco * quantidades[cesta.id]).ToString("C", brasil))</p>
+                            </div>
+                        }
+
+                        @* as contas: os textos vêm prontos do controller *@
+                        <div class="d-flex justify-content-between small">
+                            <span>Produtos</span>
+                            <span class="text-nowrap">@ViewBag.ProdutosTexto</span>
+                        </div>
+                        <div class="d-flex justify-content-between small">
+                            <span>Frete</span>
+                            <span class="text-nowrap">@ViewBag.FreteTexto</span>
+                        </div>
+                        <div class="d-flex justify-content-between fw-bold mt-3 pt-2 border-top">
+                            <span>Total</span>
+                            <span class="text-nowrap">@ViewBag.TotalTexto</span>
+                        </div>
+
+                        @* name="continuar" avisa o controller que a pessoa quer ir para a etapa 3 *@
+                        <button type="submit" name="continuar" value="1" class="btn btn-dark rounded-pill w-100 mt-4">Continuar</button>
+                    </div>
+                </div>
+
+
+            </div>
+            </form>
+        </div>

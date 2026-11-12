@@ -1,0 +1,129 @@
+@model Services.Models.ProdutoCadastro
+@{
+    ViewData["Title"] = "Editar produto";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var id = (int)ViewData["Id"]!;
+    var numero = "#" + id.ToString("D4");
+    var imagemAtual = ViewData["ImagemAtual"] as string;
+    // fotos extras do produto (tabela ProdutoImagens); ?? = se não vier nada, lista vazia
+    var fotosExtras = ViewBag.FotosExtras as List<Business.ProdutoImagem> ?? new List<Business.ProdutoImagem>();
+}
+
+<div class="container py-5">
+
+        @* caminho: lista / item atual *@
+        <p class="small text-secondary mb-2">
+            <a asp-area="Admin" asp-controller="AdminProdutos" asp-action="Index" class="link-secondary text-decoration-none">Produtos</a> / Editando
+            produto @numero
+        </p>
+
+
+        @* enctype multipart: necessário para enviar a foto *@
+        <form asp-area="Admin" asp-controller="AdminProdutos" asp-action="Editar" asp-route-id="@id" method="post" enctype="multipart/form-data">
+
+            @* título à esquerda, botões à direita *@
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                @*elemento 1*@
+                <h1 class="fs-2 fw-bold mb-0">Editando produto @numero</h1>
+                @*elemento 2*@
+                <div class="d-flex flex-wrap gap-2">
+                    <a asp-area="Admin" asp-controller="AdminProdutos" asp-action="Index" class="btn btn-light border">Cancelar</a>
+                    <button type="submit" class="btn btn-gold">Salvar alterações</button>
+                </div>
+
+            </div>
+
+            @* erros do Services (ex.: "Informe o preço") *@
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+            <div class="row g-4">
+                <div class="col-12 col-lg-7">
+
+                    @* elemento 1*@
+                    <section class="bg-white border rounded-4 p-4 h-100">
+                        <h2 class="fs-5 fw-bold mb-4">Informações</h2>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="nomeProduto" class="form-label fw-semibold">Nome</label>
+                                <input type="text" class="form-control" id="nomeProduto" asp-for="Nome">
+                            </div>
+                            <div class="col-12">
+                                <label for="descricao" class="form-label fw-semibold">Descrição</label>
+                                <textarea class="form-control" id="descricao" asp-for="Descricao"
+                                    rows="4"></textarea>
+                            </div>
+                            @* caixa de categoria: a lista vem do controller (ViewBag.Categorias) *@
+                            <div class="col-12">
+                                <label for="categoria" class="form-label fw-semibold">Categoria</label>
+                                @* asp-for liga a caixa ao campo CategoriaId *@
+                                <select class="form-select" id="categoria" asp-for="CategoriaId">
+                                    <option value="">Escolha a categoria</option>
+                                    @* repete uma opção para cada categoria do banco *@
+                                    @foreach (var categoria in (List<Business.Categoria>)ViewBag.Categorias)
+                                    {
+                                        <option value="@categoria.id">@categoria.nome</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-6">
+                                <label for="preco" class="form-label fw-semibold">Preço</label>
+                                <input type="text" class="form-control" id="preco" asp-for="Preco" placeholder="R$ 0,00">
+                            </div>
+                            <div class="col-6">
+                                <label for="quantidade" class="form-label fw-semibold">Estoque</label>
+                                <input type="number" class="form-control" id="quantidade" asp-for="Quantidade"
+                                    min="0">
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                @*elemento 2 *@
+
+                @* foto principal e fotos extras: cada "Remover" tira uma foto; os campos de baixo trocam ou acrescentam *@
+                <div class="col-12 col-lg-5">
+                    <section class="bg-white border rounded-4 p-4 h-100">
+                        <h2 class="fs-5 fw-bold mb-4">Fotos</h2>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="ratio ratio-1x1">
+                                    <img src="@Url.Content(imagemAtual ?? "~/imgs/produtos/produto.jpg")" alt="Foto 1 do produto" class="object-fit-cover rounded-3">
+                                </div>
+                                @if (imagemAtual != null)
+                                {
+                                    <button type="submit" name="removerImagem" value="true" class="btn btn-outline-danger btn-sm w-100 mt-1">Remover</button>
+                                }
+                            </div>
+
+                            @* fotos extras: uma caixa para cada linha da tabela ProdutoImagens *@
+                            @foreach (var extra in fotosExtras)
+                            {
+                                <div class="col-6">
+                                    <div class="ratio ratio-1x1">
+                                        <img src="@Url.Content(extra.arquivo)" alt="Outra foto do produto" class="object-fit-cover rounded-3">
+                                    </div>
+                                    @* value = número da foto: o controller sabe qual remover *@
+                                    <button type="submit" name="removerFoto" value="@extra.id" class="btn btn-outline-danger btn-sm w-100 mt-1">Remover</button>
+                                </div>
+                            }
+                        </div>
+                        <div class="mt-3">
+                            <label for="novaFoto" class="form-label fw-semibold">Trocar a foto principal</label>
+                            <input type="file" class="form-control" id="novaFoto" name="foto" accept="image/*">
+                            <div class="form-text">PNG, JPG ou WebP de até 5 MB</div>
+                        </div>
+                        @* multiple: deixa escolher várias de uma vez *@
+                        <div class="mt-3">
+                            <label for="maisFotos" class="form-label fw-semibold">Enviar mais fotos</label>
+                            <input type="file" class="form-control" id="maisFotos" name="fotos" accept="image/*" multiple>
+                            <div class="form-text">Até 3 fotos além da principal</div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+
+        </form>
+
+    </div>

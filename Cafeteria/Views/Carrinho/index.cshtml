@@ -1,0 +1,126 @@
+﻿@* Tela do carrinho. O CarrinhoController manda os produtos (Model), as quantidades e o total (ViewBag) *@
+@model List<Business.Produto>
+@{
+    ViewData["Title"] = "Carrinho";
+    ViewData["NoFooter"] = true;
+    // formato brasileiro de dinheiro, usado em todos os valores desta tela
+    var brasil = new System.Globalization.CultureInfo("pt-BR");
+    // quantidade de cada produto: id -> quantidade
+    var quantidades = (Dictionary<int, int>)ViewBag.Quantidades;
+}
+
+<div class="container py-4">
+    @* carrinho vazio: mostra o aviso e as sugestões *@
+    @if (Model.Count == 0)
+    {
+        @* text-center = tudo centralizado; py-4 = espaço em cima e embaixo *@
+        <div class="text-center py-4">
+            @* ícone grande e cinza *@
+            <span class="bi bi-bag display-4 text-secondary"></span>
+            <h1 class="fs-3 fw-bold mt-3">Seu carrinho está vazio</h1>
+            <p class="text-secondary mb-4">Que tal escolher uma cesta para alguém especial?</p>
+            <a asp-controller="Home" asp-action="TotalProduto" class="btn btn-dark rounded-pill px-4">Ver cestas</a>
+        </div>
+
+        @* sugestões embaixo *@
+        <section class="border-top mt-5 pt-5">
+            <h2 class="fs-4 fw-bold mb-2">Que tal uma destas?</h2>
+            <div class="risco mb-4"></div>
+            <div class="row g-4">
+                @* repete o card para cada cesta sugerida *@
+                @foreach (var sugestao in (List<Business.Produto>)ViewBag.Sugestoes)
+                {
+                    <div class="col-6 col-md-3">
+                        @* o card inteiro é um link para a página da cesta *@
+                        <a asp-controller="Home" asp-action="Produto" asp-route-id="@sugestao.id" class="d-block text-decoration-none link-dark">
+                            <div class="ratio ratio-1x1">
+                                <img src="@Url.Content(sugestao.imagem ?? "~/imgs/produtos/produto.jpg")" alt="@sugestao.nome" class="object-fit-contain rounded-4 p-3">
+                            </div>
+                            <p class="mt-2 mb-0">@sugestao.nome</p>
+                            <p class="fw-bold text-gold mb-0">@sugestao.preco.ToString("C", brasil)</p>
+                        </a>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+    else
+    {
+        <div class="row">
+            @* texto base h1 e afins *@
+            <div class="col-12 col-lg-10 mx-auto">
+                <h1 class="fs-3 fw-bold">Seu carrinho</h1>
+                @* Model.Count = quantos produtos diferentes tem no carrinho *@
+                <p class="text-secondary">@Model.Count produto(s)</p>
+
+                @* repete o bloco para cada produto do carrinho *@
+                @foreach (var cesta in Model)
+                {
+                    // pega a quantidade deste produto
+                    int quantidade = quantidades[cesta.id];
+
+                    @* border no top e padding y de 3 *@
+                    <div class="border-top py-3">
+                        <div class="row align-items-center">
+                            @* foto *@
+                            <div class="col-3 col-md-2">
+                                <div class="ratio ratio-1x1">
+                                    <img src="@Url.Content(cesta.imagem ?? "~/imgs/produtos/produto.jpg")" alt="@cesta.nome" class="object-fit-contain rounded-3">
+                                </div>
+                            </div>
+
+                            @* nome, preço de uma unidade e remover *@
+                            <div class="col-9 col-md-6">
+                                <p class="fw-semibold">@cesta.nome</p>
+                                <p class="small text-secondary mb-2">@cesta.preco.ToString("C", brasil) cada</p>
+                                @* chama CarrinhoController.Remover com o id desta cesta *@
+                                <a asp-controller="Carrinho" asp-action="Remover" asp-route-id="@cesta.id" class="small link-secondary">Remover</a>
+                            </div>
+
+                            @* botões − e +: chamam CarrinhoController.Alterar e a página recarrega, sem JavaScript *@
+                            <div class="col-6 col-md-2 mt-3 mt-md-0">
+                                <div class="input-group input-group-sm">
+                                    @* asp-route-mudanca="-1" tira uma unidade *@
+                                    <a asp-controller="Carrinho" asp-action="Alterar" asp-route-id="@cesta.id" asp-route-mudanca="-1" class="btn btn-outline-secondary">−</a>
+                                    @* input-group-text = caixa de texto colada nos botões; flex-fill ocupa o espaço do meio *@
+                                    <span class="input-group-text flex-fill justify-content-center bg-white">@quantidade</span>
+                                    @* asp-route-mudanca="1" acrescenta uma unidade *@
+                                    <a asp-controller="Carrinho" asp-action="Alterar" asp-route-id="@cesta.id" asp-route-mudanca="1" class="btn btn-outline-secondary">+</a>
+                                </div>
+                            </div>
+
+                            @* valor deste produto: preço x quantidade *@
+                            <div class="col-6 col-md-2 mt-3 mt-md-0 text-end fw-semibold">@((cesta.preco * quantidade).ToString("C", brasil))</div>
+                        </div>
+                    </div>
+                }
+
+                <div class="border-top pt-3">
+                    @* soma dos produtos: justify-content-between separa direita e esquerda *@
+                    <div class="d-flex justify-content-between small text-secondary">
+                        <span>Produtos</span>
+                        <span>@(((double)ViewBag.Total).ToString("C", brasil))</span>
+                    </div>
+                    @* valor do frete *@
+                    <div class="d-flex justify-content-between small text-secondary">
+                        <span>Frete</span>
+                        <span>calculado na próxima etapa</span>
+                    </div>
+
+                    @* total *@
+                    <div class="d-flex justify-content-between fw-bold border-top pt-2 mt-2">
+                        <span>Total</span>
+                        <span>@(((double)ViewBag.Total).ToString("C", brasil))</span>
+                    </div>
+                </div>
+
+                @* finaliza o pedido *@
+                <a asp-controller="Pedido" asp-action="Personalizar" class="btn btn-dark rounded-pill w-100 mt-4">Finalizar pedido</a>
+                @* continuar comprando *@
+                <p class="text-center mt-3">
+                    <a asp-controller="Home" asp-action="Index" class="link-secondary text-decoration-none small">← Continuar comprando</a>
+                </p>
+            </div>
+        </div>
+    }
+</div>

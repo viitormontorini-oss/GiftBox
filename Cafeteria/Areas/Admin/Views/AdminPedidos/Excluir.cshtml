@@ -1,0 +1,107 @@
+@model Business.Pedido
+@using System.Globalization
+@{
+    ViewData["Title"] = "Excluir pedido";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var br = CultureInfo.GetCultureInfo("pt-BR");
+    var numero = "#" + Model.id.ToString("D6");
+    var cor = Model.status_pedido == "Entregue" ? "bg-success" : "bg-warning";
+    var personalizacao = string.Join(" · ", Model.produtos.Select(i => i.DescricaoCoresDecoracao).Where(d => !string.IsNullOrWhiteSpace(d)));
+}
+
+<div class="container py-4 py-md-5">
+
+        @* caminho: lista / item atual *@
+        <p class="small text-secondary mb-2">
+            <a asp-area="Admin" asp-controller="AdminPedidos" asp-action="Index" class="link-secondary text-decoration-none">Pedidos</a> / Pedido @numero
+        </p>
+
+        @* título à esquerda, botões à direita *@
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <h1 class="fs-2 fw-bold mb-0">Pedido @numero</h1>
+                <span class="d-inline-flex align-items-center gap-2">
+                    <span class="rounded-circle @cor d-inline-block p-1"></span>
+                    @Model.status_pedido
+                </span>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-area="Admin" asp-controller="AdminPedidos" asp-action="Editar" asp-route-id="@Model.id" class="btn btn-light border">Editar</a>
+                <a asp-area="Admin" asp-controller="AdminPedidos" asp-action="Excluir" asp-route-id="@Model.id" class="btn btn-outline-danger">Excluir</a>
+                <a asp-area="Admin" asp-controller="AdminPedidos" asp-action="Index" class="btn btn-gold">Concluir pedido</a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-lg-4">
+                <section class="bg-white border rounded-4 p-4 h-100">
+                    <h2 class="fs-5 fw-bold mb-4">Produto</h2>
+                    @foreach (var item in Model.produtos)
+                    {
+                        <div class="d-flex mb-4">
+                            <img src="@Url.Content(item.produto.imagem ?? "~/imgs/produtos/produto.jpg")" alt="Foto do produto" width="96" height="96" class="rounded-3 object-fit-cover me-3">
+                            <div>
+                                <p class="fw-bold fs-5 mb-1">@item.produto.nome</p>
+                                <p class="text-secondary mb-0">@item.quantidade un · @(((item.preco_unitario ?? 0) * item.quantidade).ToString("C2", br))</p>
+                            </div>
+                        </div>
+                    }
+                    <p class="text-secondary small text-uppercase fw-semibold mb-1">Mensagem do cartão</p>
+                    <p class="text-break mb-3">@(string.IsNullOrWhiteSpace(Model.cartao_texto) ? "—" : $"“{Model.cartao_texto}”")</p>
+                    <p class="text-secondary small text-uppercase fw-semibold mb-1">Personalização</p>
+                    <p class="text-break mb-3">@(personalizacao == "" ? "—" : personalizacao)</p>
+                </section>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <section class="bg-white border rounded-4 p-4 h-100">
+                    <h2 class="fs-5 fw-bold mb-4">Entrega</h2>
+                    <p class="text-secondary small text-uppercase fw-semibold mb-1">Data</p>
+                    <p class="text-break mb-3">@Model.data_pedido.ToString("dd/MM/yyyy")</p>
+                    <p class="text-secondary small text-uppercase fw-semibold mb-1">Endereço</p>
+                    @if (Model.endereco == null)
+                    {
+                        <p class="text-break mb-3">Retirada na loja</p>
+                    }
+                    else
+                    {
+                        <p class="text-break mb-3">@Model.endereco.logradouro, @Model.endereco.numero@(string.IsNullOrWhiteSpace(Model.endereco.complemento) ? "" : " · " + Model.endereco.complemento)<br><span class="text-secondary">@Model.endereco.bairro · @Model.endereco.cidade · @Model.endereco.cep</span></p>
+                    }
+                    <p class="text-secondary small text-uppercase fw-semibold mb-1">Observação</p>
+                    <p class="text-break mb-3">@(string.IsNullOrWhiteSpace(Model.observacao) ? "—" : Model.observacao)</p>
+                </section>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <section class="bg-white border rounded-4 p-4 h-100">
+                    <h2 class="fs-5 fw-bold mb-4">Pagamento</h2>
+                    <p class="text-secondary small text-uppercase fw-semibold mb-1">Forma</p>
+                    <p class="text-break mb-3">@Model.tipo_pagamento</p>
+                    <p class="text-secondary small text-uppercase fw-semibold mb-1">Total</p>
+                    <p class="text-break mb-3">@(Model.Total?.ToString("C2", br) ?? "—")</p>
+                    <p class="text-secondary small text-uppercase fw-semibold mb-1">Cliente</p>
+                    <p class="text-break mb-3">@Model.cliente.nome<br><span class="text-secondary">@(Model.cliente.telefones.FirstOrDefault()?.numero)</span></p>
+                </section>
+            </div>
+        </div>
+
+    </div>
+
+    @* janela de confirmação já aberta, sem JavaScript: d-block mostra a janela e bg-dark bg-opacity-50 escurece o fundo *@
+    <div class="modal d-block bg-dark bg-opacity-50" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="titulo-modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 p-3 text-center">
+                <div class="modal-body">
+                    <h2 class="fs-4 fw-bold" id="titulo-modal">Excluir pedido @numero?</h2>
+                    <p class="text-secondary">Essa ação não pode ser desfeita.</p>
+                    @* se o banco recusar a exclusão, o motivo aparece aqui *@
+                    <div asp-validation-summary="All" class="text-danger small"></div>
+                    @* o "Excluir" agora é um formulário: envia (POST) e apaga de verdade *@
+                    <form asp-area="Admin" asp-controller="AdminPedidos" asp-action="Excluir" asp-route-id="@Model.id" method="post" class="row g-2">
+                        <div class="col-6"><a asp-area="Admin" asp-controller="AdminPedidos" asp-action="Ver" asp-route-id="@Model.id" class="btn btn-light border w-100">Cancelar</a></div>
+                        <div class="col-6"><button type="submit" class="btn btn-danger w-100">Excluir</button></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Acesso negado";
+}
+
+@* aparece quando um Gestor tenta abrir uma tela só de Administrador (Usuários, Cidades) *@
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 col-lg-6 mx-auto">
+            <div class="bg-white border rounded-4 p-5 text-center">
+                <h1 class="fs-2 fw-bold">Acesso negado</h1>
+                <p class="text-secondary mb-4">Seu usuário não tem permissão para acessar esta página.</p>
+                <a asp-area="Admin" asp-controller="AdminPrincipal" asp-action="Index" class="btn btn-gold">Voltar ao início</a>
+            </div>
+        </div>
+    </div>
+</div>

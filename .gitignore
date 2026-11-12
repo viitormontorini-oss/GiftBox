@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+.vs/
+.idea/
+*.user
+*.suo
+.env
+.env.*
+*.pfx
+*.p12
+*.pem
+appsettings.Local.json
+publish/
